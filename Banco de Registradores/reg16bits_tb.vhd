@@ -1,28 +1,28 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
 
-entity reg16bits_tb is
-end entity;
+ENTITY reg16bits_tb IS
+END ENTITY;
 
-architecture a_reg16bits_tb of reg16bits_tb is
-    component reg16bits is
-        port( 
-         clk      : in std_logic;
-         rst      : in std_logic;
-         wr_en    : in std_logic;
-         data_in  : in unsigned(15 downto 0);
-         data_out : out unsigned(15 downto 0)
-   );
-   end component;
-                            -- 100ns é o período para o clock
-   constant period_time : time := 100 ns;
-   signal finished : std_logic := '0';
-   signal clk, rst, wr_en : std_logic ;
-   signal data_in, data_out : unsigned(15 downto 0) :="0000000000000000";
+ARCHITECTURE a_reg16bits_tb OF reg16bits_tb IS
+    COMPONENT reg16bits IS
+        PORT (
+            clk : IN STD_LOGIC;
+            rst : IN STD_LOGIC;
+            wr_en : IN STD_LOGIC;
+            data_in : IN unsigned(15 DOWNTO 0);
+            data_out : OUT unsigned(15 DOWNTO 0)
+        );
+    END COMPONENT;
+    -- 100ns é o período para o clock
+    CONSTANT period_time : TIME := 100 ns;
+    SIGNAL finished : STD_LOGIC := '0';
+    SIGNAL clk, rst, wr_en : STD_LOGIC;
+    SIGNAL data_in, data_out : unsigned(15 DOWNTO 0) := "0000000000000000";
 
-begin 
-    utt: reg16bits port map(
+BEGIN
+    utt : reg16bits PORT MAP(
         clk => clk,
         rst => rst,
         data_in => data_in,
@@ -30,43 +30,47 @@ begin
         wr_en => wr_en
     );
 
-    rst_global: process 
-    begin
+    rst_global : PROCESS
+    BEGIN
         rst <= '1';
-        wait for period_time*2; --espera 2 clocks
+        WAIT FOR period_time*2; --espera 2 clocks
         rst <= '0';
-        wait;
-    end process;
+        WAIT;
+    END PROCESS;
 
-    sim_time_proc: process
-    begin
-        wait for 800 ns; --tempo total da simulação
+    sim_time_proc : PROCESS
+    BEGIN
+        WAIT FOR period_time*10; --tempo total da simulação
         finished <= '1';
-        wait;
-    end process sim_time_proc;
+        WAIT;
+    END PROCESS sim_time_proc;
 
-    clk_proc: process
-    begin
-        while finished /= '1' loop
+    clk_proc : PROCESS
+    BEGIN
+        WHILE finished /= '1' LOOP
             clk <= '0';
-            wait for period_time/2;
+            WAIT FOR period_time/2;
             clk <= '1';
-            wait for period_time/2;
-        end loop;
-        wait;
-    end process clk_proc;
+            WAIT FOR period_time/2;
+        END LOOP;
+        WAIT;
+    END PROCESS clk_proc;
 
-process 
-begin
-    wait for 200 ns;
-    wr_en <= '0';
-    data_in <= "1001100110011001";
-    wait for 100 ns;
-    data_in <= "1010101010101010";
-    wait;
-end process;
+    PROCESS
+    BEGIN
+        WAIT FOR 100 ns;
+        wr_en <= '0';
+        data_in <= "0000000000001111";
+        WAIT FOR 100 ns;
+        wr_en <= '1';
+        data_in <= "0000000000001010";
+        WAIT FOR 100 ns;
+        wr_en <= '0';
+        data_in <= "0000000000000011";
+        WAIT FOR 100 ns;
+        wr_en <= '1';
+        data_in <= "0000000000000100";
+        WAIT;
+    END PROCESS;
 
-end architecture;
-
-
-
+END ARCHITECTURE;
