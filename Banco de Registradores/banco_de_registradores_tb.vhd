@@ -67,14 +67,17 @@ BEGIN
 
     PROCESS
     BEGIN
-        WAIT FOR 100 ns;
         reg_write <= '1';
-        write_reg <= "001";
-        write_data <= "0000000000000010";
+        write_reg <= "000";
+        write_data <= "0000000000001111";
         WAIT FOR 100 ns;
         reg_write <= '0';
         read_reg1 <= "001";
-        -- read_data1 <= "0000000000000010";
+        WAIT FOR 100 ns;
+        reg_write <= '0';
+        write_reg <= "000";
+        write_data <= "0000000000000101";
+        WAIT FOR 100 ns;
         WAIT;
     END PROCESS;
 

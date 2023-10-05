@@ -28,7 +28,7 @@ ARCHITECTURE a_banco_de_registradores OF banco_de_registradores IS
     END COMPONENT;
 
     COMPONENT mux16bits_8x3x1 IS
-        PORT(
+        PORT (
             entr0 : IN unsigned(15 DOWNTO 0);
             entr1 : IN unsigned(15 DOWNTO 0);
             entr2 : IN unsigned(15 DOWNTO 0);
@@ -39,6 +39,14 @@ ARCHITECTURE a_banco_de_registradores OF banco_de_registradores IS
             entr7 : IN unsigned(15 DOWNTO 0);
             sel : IN unsigned(2 DOWNTO 0);
             saida : OUT unsigned(15 DOWNTO 0)
+        );
+    END COMPONENT;
+
+    COMPONENT decoder_3x8 IS
+        PORT (
+            write_register : IN unsigned(2 DOWNTO 0);
+            write_enable : STD_LOGIC;
+            saida : OUT unsigned(7 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -56,26 +64,40 @@ BEGIN
     reg_6 : reg16bits PORT MAP(clk => clk, rst => rst, wr_en => wr_en_6, data_in => write_data, data_out => data_out_6);
     reg_7 : reg16bits PORT MAP(clk => clk, rst => rst, wr_en => wr_en_7, data_in => write_data, data_out => data_out_7);
 
-    mux_0 : mux16bits_8x3x1 PORT MAP(entr0 => data_out_0,
-                                    entr1 => data_out_1,
-                                    entr2 => data_out_2,
-                                    entr3 => data_out_3,
-                                    entr4 => data_out_4,
-                                    entr5 => data_out_5,
-                                    entr6 => data_out_6,
-                                    entr7 => data_out_7,
-                                    sel => read_reg1,
-                                    saida => read_data1);
+    mux_0 : mux16bits_8x3x1 PORT MAP(
+        entr0 => data_out_0,
+        entr1 => data_out_1,
+        entr2 => data_out_2,
+        entr3 => data_out_3,
+        entr4 => data_out_4,
+        entr5 => data_out_5,
+        entr6 => data_out_6,
+        entr7 => data_out_7,
+        sel => read_reg1,
+        saida => read_data1);
 
-    mux_1 : mux16bits_8x3x1 PORT MAP(entr0 => data_out_0,
-                                    entr1 => data_out_1,
-                                    entr2 => data_out_2,
-                                    entr3 => data_out_3,
-                                    entr4 => data_out_4,
-                                    entr5 => data_out_5,
-                                    entr6 => data_out_6,
-                                    entr7 => data_out_7,
-                                    sel => read_reg2,
-                                    saida => read_data2);
+    mux_1 : mux16bits_8x3x1 PORT MAP(
+        entr0 => data_out_0,
+        entr1 => data_out_1,
+        entr2 => data_out_2,
+        entr3 => data_out_3,
+        entr4 => data_out_4,
+        entr5 => data_out_5,
+        entr6 => data_out_6,
+        entr7 => data_out_7,
+        sel => read_reg2,
+        saida => read_data2);
+
+    decoder : decoder_3x8 PORT MAP(
+        write_register => write_reg,
+        write_enable => reg_write,
+        saida(0) => wr_en_0,
+        saida(1) => wr_en_1,
+        saida(2) => wr_en_2,
+        saida(3) => wr_en_3,
+        saida(4) => wr_en_4,
+        saida(5) => wr_en_5,
+        saida(6) => wr_en_6,
+        saida(7) => wr_en_7);
 
 END ARCHITECTURE;
