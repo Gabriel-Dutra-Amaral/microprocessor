@@ -1,0 +1,34 @@
+v 4
+file . "ula_e_banco.vhd" "162b7c5ba059f083a79240fc75b6c6c107e11ac9" "20231005211131.161":
+  entity ula_e_banco at 1( 0) + 0 on 31;
+  architecture a_ula_e_banco of ula_e_banco at 22( 629) + 0 on 32;
+file . "decoder_3x8.vhd" "81d788e1ebf021450e2f2dba680589b4f17933dc" "20231005211131.136":
+  entity decoder_3x8 at 1( 0) + 0 on 27;
+  architecture a_decoder_3x8 of decoder_3x8 at 13( 248) + 0 on 28;
+file . "reg16bits.vhd" "6eba267c318d34687efd4a3bafd28c809c310f67" "20231005211131.112":
+  entity reg16bits at 1( 0) + 0 on 23;
+  architecture a_reg16bits of reg16bits at 15( 284) + 0 on 24;
+file . "subtr.vhd" "60b6f8741f19c811431b786c8287e061172695b2" "20231005211131.090":
+  entity subtr at 1( 0) + 0 on 19;
+  architecture a_subtr of subtr at 12( 204) + 0 on 20;
+file . "mux16bits.vhd" "ec445b0b5e2b10f7cfe06fe563f3c2c4d2f2fdf2" "20231005211131.068":
+  entity mux16bits at 1( 0) + 0 on 15;
+  architecture a_mux16bits of mux16bits at 16( 426) + 0 on 16;
+file . "maior.vhd" "ee6110efe8b5baf39bb57395d81e1ddc391853e2" "20231005211131.048":
+  entity maior at 1( 0) + 0 on 11;
+  architecture a_maior of maior at 12( 204) + 0 on 12;
+file . "menor.vhd" "85866a244e731951475d5025322a687a41f86e14" "20231005211131.057":
+  entity menor at 1( 0) + 0 on 13;
+  architecture a_menor of menor at 12( 204) + 0 on 14;
+file . "soma.vhd" "3ccac7acb4e866e3e1fe83354c998587f8ae2026" "20231005211131.080":
+  entity soma at 1( 0) + 0 on 17;
+  architecture a_soma of soma at 12( 202) + 0 on 18;
+file . "ula.vhd" "f4fa7ea0116bea596e0591f268e53cc62d33e85b" "20231005211131.100":
+  entity ula at 1( 0) + 0 on 21;
+  architecture a_ula of ula at 13( 264) + 0 on 22;
+file . "mux16bits_8x3x1.vhd" "3f4ea496852f3dbf16afaff049e482c0dc0f6fe0" "20231005211131.125":
+  entity mux16bits_8x3x1 at 1( 0) + 0 on 25;
+  architecture a_mux16bits_8x3x1 of mux16bits_8x3x1 at 20( 632) + 0 on 26;
+file . "banco_de_registradores.vhd" "87d20df7a2b3de5485e6569cbe0c0cec218f7084" "20231005211131.149":
+  entity banco_de_registradores at 1( 0) + 0 on 29;
+  architecture a_banco_de_registradores of banco_de_registradores at 19( 501) + 0 on 30;

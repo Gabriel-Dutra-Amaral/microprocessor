@@ -1,16 +1,16 @@
 v 4
-file . "decoder_3x8.vhd" "81d788e1ebf021450e2f2dba680589b4f17933dc" "20231005075849.371":
-  entity decoder_3x8 at 1( 0) + 0 on 123;
-  architecture a_decoder_3x8 of decoder_3x8 at 13( 248) + 0 on 124;
-file . "banco_de_registradores.vhd" "87d20df7a2b3de5485e6569cbe0c0cec218f7084" "20231005075849.381":
-  entity banco_de_registradores at 1( 0) + 0 on 125;
-  architecture a_banco_de_registradores of banco_de_registradores at 19( 501) + 0 on 126;
-file . "reg16bits.vhd" "6eba267c318d34687efd4a3bafd28c809c310f67" "20231005075849.354":
-  entity reg16bits at 1( 0) + 0 on 119;
-  architecture a_reg16bits of reg16bits at 15( 284) + 0 on 120;
-file . "mux16bits_8x3x1.vhd" "3f4ea496852f3dbf16afaff049e482c0dc0f6fe0" "20231005075849.363":
-  entity mux16bits_8x3x1 at 1( 0) + 0 on 121;
-  architecture a_mux16bits_8x3x1 of mux16bits_8x3x1 at 20( 632) + 0 on 122;
-file . "banco_de_registradores_tb.vhd" "1db426cdf03e909683263c4828fece8ce7e30c92" "20231005075849.389":
-  entity banco_de_registradores_tb at 1( 0) + 0 on 127;
-  architecture a_banco_de_registradores_tb of banco_de_registradores_tb at 8( 119) + 0 on 128;
+file . "banco_de_registradores_tb.vhd" "89e4780f10cc807a42f638131ff6aafb0b985a23" "20231005220829.567":
+  entity banco_de_registradores_tb at 1( 0) + 0 on 157;
+  architecture a_banco_de_registradores_tb of banco_de_registradores_tb at 8( 119) + 0 on 158;
+file . "mux16bits_8x3x1.vhd" "3f4ea496852f3dbf16afaff049e482c0dc0f6fe0" "20231005220829.540":
+  entity mux16bits_8x3x1 at 1( 0) + 0 on 151;
+  architecture a_mux16bits_8x3x1 of mux16bits_8x3x1 at 20( 632) + 0 on 152;
+file . "reg16bits.vhd" "6eba267c318d34687efd4a3bafd28c809c310f67" "20231005220829.530":
+  entity reg16bits at 1( 0) + 0 on 149;
+  architecture a_reg16bits of reg16bits at 15( 284) + 0 on 150;
+file . "banco_de_registradores.vhd" "18452735a162f8d1d06cfb7dfaac1b02a0629ee1" "20231005220829.558":
+  entity banco_de_registradores at 1( 0) + 0 on 155;
+  architecture a_banco_de_registradores of banco_de_registradores at 19( 501) + 0 on 156;
+file . "decoder_3x8.vhd" "81d788e1ebf021450e2f2dba680589b4f17933dc" "20231005220829.549":
+  entity decoder_3x8 at 1( 0) + 0 on 153;
+  architecture a_decoder_3x8 of decoder_3x8 at 13( 248) + 0 on 154;
