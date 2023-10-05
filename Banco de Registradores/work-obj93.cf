@@ -1,10 +1,13 @@
 v 4
-file . "banco_de_registradores.vhd" "540b412a85040d4d922ea4a3ac174c218f04a9f6" "20231005013932.335":
-  entity banco_de_registradores at 1( 0) + 0 on 23;
-  architecture a_banco_de_registradores of banco_de_registradores at 19( 501) + 0 on 24;
-file . "reg16bits.vhd" "6eba267c318d34687efd4a3bafd28c809c310f67" "20231005013932.314":
-  entity reg16bits at 1( 0) + 0 on 19;
-  architecture a_reg16bits of reg16bits at 15( 284) + 0 on 20;
-file . "mux16bits_8x3x1.vhd" "3f4ea496852f3dbf16afaff049e482c0dc0f6fe0" "20231005013932.323":
-  entity mux16bits_8x3x1 at 1( 0) + 0 on 21;
-  architecture a_mux16bits_8x3x1 of mux16bits_8x3x1 at 20( 632) + 0 on 22;
+file . "banco_de_registradores_tb.vhd" "a0256d7f33a6592ff448a79c30b486bf2f285066" "20231005022829.794":
+  entity banco_de_registradores_tb at 1( 0) + 0 on 85;
+  architecture a_banco_de_registradores_tb of banco_de_registradores_tb at 8( 119) + 0 on 86;
+file . "mux16bits_8x3x1.vhd" "3f4ea496852f3dbf16afaff049e482c0dc0f6fe0" "20231005022829.774":
+  entity mux16bits_8x3x1 at 1( 0) + 0 on 81;
+  architecture a_mux16bits_8x3x1 of mux16bits_8x3x1 at 20( 632) + 0 on 82;
+file . "reg16bits.vhd" "6eba267c318d34687efd4a3bafd28c809c310f67" "20231005022829.763":
+  entity reg16bits at 1( 0) + 0 on 79;
+  architecture a_reg16bits of reg16bits at 15( 284) + 0 on 80;
+file . "banco_de_registradores.vhd" "540b412a85040d4d922ea4a3ac174c218f04a9f6" "20231005022829.784":
+  entity banco_de_registradores at 1( 0) + 0 on 83;
+  architecture a_banco_de_registradores of banco_de_registradores at 19( 501) + 0 on 84;
