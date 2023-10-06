@@ -42,7 +42,7 @@ BEGIN
     rst_global : PROCESS
     BEGIN
         rst <= '1';
-        WAIT FOR period_time * 2;
+        WAIT FOR period_time;
         rst <= '0';
         WAIT;
     END PROCESS;
@@ -67,22 +67,31 @@ BEGIN
 
     PROCESS
     BEGIN
+        WAIT FOR 100 ns; -- reset
+
+        write_reg <= "100";
         reg_write <= '1';
+        write_data <= "0000000000000011";
+        WAIT FOR 100 ns;
+
+        reg_write <= '0';
+        read_reg1 <= "100";
+        read_reg2 <= "100";
+        WAIT FOR 100 ns;
+
         write_reg <= "000";
-        write_data <= "0000000000001111";
+        reg_write <= '1';
+        write_data <= "0000000000000100";
+        WAIT FOR 100 ns;
+
         write_reg <= "001";
-        write_data <= "0000000000001111";
-        write_reg <= "010";
-        write_data <= "0000000000001110";
-        WAIT FOR 100 ns;
         reg_write <= '0';
-        read_reg1 <= "001";
-        read_reg2 <= "010";
+        write_data <= "0000000000000100";
         WAIT FOR 100 ns;
+
         reg_write <= '0';
-        write_reg <= "000";
-        write_data <= "0000000000000101";
-        WAIT FOR 100 ns;
+        read_reg1 <= "000";
+        read_reg2 <= "100";
         WAIT;
     END PROCESS;
 
