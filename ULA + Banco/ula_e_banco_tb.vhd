@@ -17,7 +17,7 @@ ARCHITECTURE a_ula_e_banco_tb OF ula_e_banco_tb IS
             write_register : IN unsigned(2 DOWNTO 0);
             read_register1 : IN unsigned(2 DOWNTO 0);
             read_register2 : IN unsigned(2 DOWNTO 0);
-            ALU_SrcB : IN STD_LOGIC; --> Determina a segunda entrada da ula
+            ALU_SrcB : IN STD_LOGIC; -- Determina a segunda entrada da ula
             ula_out : OUT unsigned(15 DOWNTO 0);
             data1 : OUT unsigned(15 DOWNTO 0);
             data2 : OUT unsigned(15 DOWNTO 0)
@@ -43,11 +43,10 @@ BEGIN
         write_register => write_reg,
         read_register1 => read_reg1,
         read_register2 => read_reg2,
-        ALU_SrcB => Alu_SrcB, --> Determina a segunda entrada da ula
+        ALU_SrcB => Alu_SrcB, -- Determina a segunda entrada da ula
         ula_out => saida_ula,
         data1 => data1,
         data2 => data2
-
     );
 
     rst_global : PROCESS
@@ -78,31 +77,42 @@ BEGIN
 
     PROCESS
     BEGIN
-        WAIT FOR 100 ns; --> Reset
+        WAIT FOR 100 ns; -- Reset
 
-        write_reg <= "000";
         enable <= '1';
+        write_reg <= "001";
+        write_data <= "0000000000000011";
+        WAIT FOR 100 ns;
+
+        enable <= '1';
+        write_reg <= "010";
         write_data <= "0000000000000011";
         WAIT FOR 100 ns;
 
         enable <= '0';
-        WAIT FOR 100 ns;
-
-        write_reg <= "001";
-        enable <= '1';
-        write_data <= "0000000000001111";
+        Alu_SrcB <= '0'; -- Registrador
+        sinal_op_ula <= "10"; -- Soma
         WAIT FOR 100 ns;
 
         enable <= '0';
+        read_reg1 <= "001";
+        read_reg2 <= "010";
         WAIT FOR 100 ns;
 
+        enable <= '1';
+        write_reg <= "011";
+        write_data <= saida_ula;
+        WAIT FOR 100 ns;
+
+        enable <= '0';
         read_reg1 <= "000";
-        read_reg2 <= "001";
+        read_reg2 <= "000";
         WAIT FOR 100 ns;
 
-        sinal_op_ula <= "10";
-        Alu_SrcB <= '0';
+        enable <= '0';
+        read_reg1 <= "011";
         WAIT FOR 100 ns;
+
         WAIT;
     END PROCESS;
 
