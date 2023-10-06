@@ -86,7 +86,7 @@ BEGIN
 
         enable <= '1';
         write_reg <= "010";
-        write_data <= "0000000000000111";
+        write_data <= "0000000000000011";
         WAIT FOR 100 ns;
 
         enable <= '0';

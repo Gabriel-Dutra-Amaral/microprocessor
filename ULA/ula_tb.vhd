@@ -30,8 +30,8 @@ BEGIN
     PROCESS
     BEGIN
         seletor_op <= "10"; --testando a soma
-        entrada_0 <= "0000000000001111";
-        entrada_1 <= "0000000000001010";
+        entrada_0 <= "0000000000001111"; -- verificar estouro
+        entrada_1 <= "0000000000001010"; -- somar negativos
         WAIT FOR 50 ns;
         entrada_0 <= "0000000000001001";
         entrada_1 <= "0000000000001000";
