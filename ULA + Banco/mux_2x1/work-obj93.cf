@@ -1,7 +1,0 @@
-v 4
-file . "mux_2x1_tb.vhd" "59a21c5c02764ad7c820c5b57498a9b8343e7cee" "20231005212824.461":
-  entity mux_2x1_tb at 1( 0) + 0 on 27;
-  architecture a_mux_2x1_tb of mux_2x1_tb at 8( 104) + 0 on 28;
-file . "mux_2x1.vhd" "65bf96967fe6ca457a1438b7998ced358dab6c9d" "20231005212824.452":
-  entity mux_2x1 at 1( 0) + 0 on 25;
-  architecture a_mux_2x1 of mux_2x1 at 13( 239) + 0 on 26;
