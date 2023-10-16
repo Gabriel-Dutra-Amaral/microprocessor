@@ -10,14 +10,13 @@ ARCHITECTURE a_maquina_de_estados_tb OF maquina_de_estados_tb IS
         PORT(
         clk : IN STD_LOGIC;
         rst : IN STD_LOGIC;
-        estado: OUT UNSIGNED(1 DOWNTO 0)
+        estado: OUT STD_LOGIC
         );
     end component;
                                 
     constant period_time : time      := 100 ns; 
     signal   finished    : std_logic := '0';
-    signal   clk, rst  : std_logic;
-    SIGNAL estado: unsigned(1 DOWNTO 0) := "00";
+    signal   clk, rst, estado : std_logic := '0';
 
 begin
     uut: maquina_de_estados port map (
@@ -55,6 +54,7 @@ begin
     PROCESS
     BEGIN
         WAIT FOR 100 ns; -- Reset
+        
         WAIT;
     END PROCESS;
 end architecture a_maquina_de_estados_tb;
