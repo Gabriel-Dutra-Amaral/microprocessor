@@ -11,7 +11,7 @@ END ENTITY;
 
 ARCHITECTURE a_somador OF somador IS
 BEGIN
-   PROCESS
+   PROCESS(entrada)
    BEGIN
       saida <= entrada + 1;
    END PROCESS;

@@ -61,6 +61,7 @@ BEGIN
     BEGIN
         WAIT FOR 100 ns;
         wr_en <= '1';
+        
         WAIT;
     END PROCESS;
 END ARCHITECTURE;

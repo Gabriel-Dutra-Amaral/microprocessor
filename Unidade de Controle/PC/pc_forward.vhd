@@ -48,4 +48,6 @@ BEGIN
         saida => somador_out
     );
 
+    data_out <= somador_out;
+    
 END ARCHITECTURE;
