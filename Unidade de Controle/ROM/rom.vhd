@@ -6,7 +6,7 @@ ENTITY rom IS
     PORT (
         clk : IN STD_LOGIC;
         endereco : IN unsigned(6 DOWNTO 0);
-        dado : OUT unsigned(11 DOWNTO 0)
+        dado : OUT unsigned(15 DOWNTO 0)
     );
 END ENTITY;
 
