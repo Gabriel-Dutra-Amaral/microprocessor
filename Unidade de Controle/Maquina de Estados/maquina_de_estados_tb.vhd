@@ -2,28 +2,28 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
-ENTITY  maquina_de_estados_tb is
+ENTITY maquina_de_estados_tb IS
 END ENTITY;
 
 ARCHITECTURE a_maquina_de_estados_tb OF maquina_de_estados_tb IS
-    component maquina_de_estados is          
-        PORT(
-        clk : IN STD_LOGIC;
-        rst : IN STD_LOGIC;
-        estado: OUT STD_LOGIC
+    COMPONENT maquina_de_estados IS
+        PORT (
+            clk : IN STD_LOGIC;
+            rst : IN STD_LOGIC;
+            estado : OUT STD_LOGIC
         );
-    end component;
-                                
-    constant period_time : time      := 100 ns; 
-    signal   finished    : std_logic := '0';
-    signal   clk, rst, estado : std_logic := '0';
+    END COMPONENT;
 
-begin
-    uut: maquina_de_estados port map (
+    CONSTANT period_time : TIME := 100 ns;
+    SIGNAL finished : STD_LOGIC := '0';
+    SIGNAL clk, rst, estado : STD_LOGIC := '0';
+
+BEGIN
+    uut : maquina_de_estados PORT MAP(
         clk => clk,
-        rst =>  rst,
+        rst => rst,
         estado => estado
-    );  
+    );
 
     rst_global : PROCESS
     BEGIN
@@ -35,7 +35,7 @@ begin
 
     sim_time_proc : PROCESS
     BEGIN
-        WAIT FOR period_time * 10;
+        WAIT FOR period_time * 5;
         finished <= '1';
         WAIT;
     END PROCESS sim_time_proc;
@@ -54,7 +54,7 @@ begin
     PROCESS
     BEGIN
         WAIT FOR 100 ns; -- Reset
-        
+
         WAIT;
     END PROCESS;
-end architecture a_maquina_de_estados_tb;
+END ARCHITECTURE a_maquina_de_estados_tb;
