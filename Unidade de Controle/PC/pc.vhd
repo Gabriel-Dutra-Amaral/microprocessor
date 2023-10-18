@@ -15,6 +15,7 @@ END ENTITY;
 ARCHITECTURE a_pc OF pc IS
 
     SIGNAL registro : unsigned(6 DOWNTO 0);
+
 BEGIN
     PROCESS (clk, rst, wr_en)
     BEGIN
