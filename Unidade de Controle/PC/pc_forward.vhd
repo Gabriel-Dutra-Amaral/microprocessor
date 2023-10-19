@@ -7,7 +7,6 @@ ENTITY pc_forward IS
         clk : IN STD_LOGIC;
         wr_en : IN STD_LOGIC;
         rst : IN STD_LOGIC;
-        data_in : IN unsigned(6 DOWNTO 0);
         data_out : OUT unsigned(6 DOWNTO 0)
     );
 END ENTITY;
@@ -31,7 +30,7 @@ ARCHITECTURE a_pc_forward OF pc_forward IS
     END COMPONENT;
 
     SIGNAL pc_out : unsigned(6 DOWNTO 0);
-    SIGNAL somador_out : unsigned(6 downto 0);
+    SIGNAL somador_out : unsigned(6 DOWNTO 0);
 
 BEGIN
 
@@ -49,5 +48,5 @@ BEGIN
     );
 
     data_out <= somador_out;
-    
+
 END ARCHITECTURE;

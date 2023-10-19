@@ -11,13 +11,14 @@ ARCHITECTURE a_pc_forward_tb OF pc_forward_tb IS
             clk : IN STD_LOGIC;
             wr_en : IN STD_LOGIC;
             rst : IN STD_LOGIC;
-            data_in : IN unsigned(6 DOWNTO 0);
+            -- data_in : IN unsigned(6 DOWNTO 0);
             data_out : OUT unsigned(6 DOWNTO 0)
         );
     END COMPONENT;
 
     SIGNAL clk, wr_en, rst : STD_LOGIC := '0';
-    SIGNAL data_in, data_out : unsigned(6 DOWNTO 0) := "0000000";
+    SIGNAL data_in : unsigned(6 DOWNTO 0) := "0000000";
+    SIGNAL data_out : unsigned(6 DOWNTO 0) := "0000000";
     CONSTANT period_time : TIME := 100 ns;
     SIGNAL finished : STD_LOGIC := '0';
 
@@ -27,7 +28,6 @@ BEGIN
         clk => clk,
         wr_en => wr_en,
         rst => rst,
-        data_in => data_in,
         data_out => data_out
     );
 
@@ -60,8 +60,10 @@ BEGIN
     PROCESS
     BEGIN
         WAIT FOR 100 ns;
+
         wr_en <= '1';
-        
+
         WAIT;
     END PROCESS;
+
 END ARCHITECTURE;
