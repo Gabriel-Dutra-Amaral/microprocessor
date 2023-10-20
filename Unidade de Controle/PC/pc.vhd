@@ -20,7 +20,7 @@ BEGIN
     PROCESS (clk, rst, wr_en)
     BEGIN
         IF rst = '1' THEN
-            registro <= "0000000";
+            registro <= "1111111";
         ELSIF wr_en = '1' THEN
             IF rising_edge(clk) THEN
                 registro <= data_in;
