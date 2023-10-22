@@ -5,7 +5,6 @@ USE ieee.numeric_std.ALL;
 ENTITY pc_rom_uc IS
     PORT (
         endereco_entrada : IN unsigned(6 DOWNTO 0);
-        wr_en : IN STD_LOGIC;
         rst : IN STD_LOGIC;
         clk : IN STD_LOGIC;
         saida_de_instrucao : OUT unsigned(15 DOWNTO 0)
@@ -42,16 +41,16 @@ ARCHITECTURE a_pc_rom_uc OF pc_rom_uc IS
 
 BEGIN
 
-    pc_rom_0 : PORT MAP(
+    pc_rom_0 : pc_rom PORT MAP(
         clk => clk,
         wr_en => saida_uc_para_pc_wr_en,
         rst => rst,
         endereco_entrada => endereco_entrada,
         seletor_jump => saida_uc_para_pc_jump_en,
         rom_out => saida_rom_entrada_uc
-    )
+    );
 
-    un_ctrl_0 : PORT MAP(
+    un_ctrl_0 : un_ctrl PORT MAP(
         leitura_de_instrucao => saida_rom_entrada_uc,
         clk => clk,
         rst => rst,

@@ -7,10 +7,11 @@ all:
 	ghdl -a pc_rom.vhd
 	ghdl -a maquina_de_estados.vhd
 	ghdl -a un_ctrl.vhd
-	ghdl -a un_ctrl_tb.vhd
-	ghdl -e un_ctrl_tb
-	ghdl -r un_ctrl_tb --wave=un_ctrl_tb.ghw
-	gtkwave un_ctrl_tb.ghw
+	ghdl -a pc_rom_uc.vhd
+	ghdl -a pc_rom_uc_tb.vhd
+	ghdl -e pc_rom_uc_tb
+	ghdl -r pc_rom_uc_tb --wave=pc_rom_uc_tb.ghw
+	gtkwave pc_rom_uc_tb.ghw
 
 rm:
 
