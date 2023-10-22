@@ -12,11 +12,14 @@ ARCHITECTURE a_pc_rom_tb OF pc_rom_tb IS
             clk : IN STD_LOGIC;
             wr_en : IN STD_LOGIC;
             rst : IN STD_LOGIC;
+            endereco_entrada : IN unsigned(6 DOWNTO 0);
+            seletor_jump : IN STD_LOGIC;
             rom_out : OUT unsigned(15 DOWNTO 0)
         );
     END COMPONENT;
 
-    SIGNAL clk, wr_en, rst : STD_LOGIC := '0';
+    SIGNAL clk, wr_en, rst, seletor_jump : STD_LOGIC := '0';
+    SIGNAL endereco_entrada : unsigned(6 DOWNTO 0) := "0000000";
     SIGNAL rom_out : unsigned(15 DOWNTO 0) := "0000000000000000";
     CONSTANT period_time : TIME := 100 ns;
     SIGNAL finished : STD_LOGIC := '0';
@@ -27,6 +30,8 @@ BEGIN
         clk => clk,
         wr_en => wr_en,
         rst => rst,
+        endereco_entrada => endereco_entrada,
+        seletor_jump => seletor_jump,
         rom_out => rom_out
     );
 
@@ -60,7 +65,16 @@ BEGIN
     BEGIN
         WAIT FOR 100 ns;
 
-        wr_en <= '1';
+        wr_en <= '1'; -- Permite saida na ROM
+        endereco_entrada <= "0000100"; -- Pode começar ou do zero ou do endereco_entrada
+        seletor_jump <= '0'; -- Se 1 -> endereco_entrada
+        WAIT FOR 100 ns;
+
+        seletor_jump <= '1'; -- Coloca endereco_entrada no pc
+        WAIT FOR 100 ns;
+
+        seletor_jump <= '0'; -- volta para o somador do pc -> nao pode esquecer
+        WAIT FOR 100 ns;
 
         WAIT;
     END PROCESS;

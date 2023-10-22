@@ -7,6 +7,8 @@ ENTITY pc_forward IS
         clk : IN STD_LOGIC;
         wr_en : IN STD_LOGIC;
         rst : IN STD_LOGIC;
+        jump_ctrl : IN STD_LOGIC;
+        data_in : IN unsigned(6 DOWNTO 0);
         data_out : OUT unsigned(6 DOWNTO 0)
     );
 END ENTITY;
@@ -31,6 +33,7 @@ ARCHITECTURE a_pc_forward OF pc_forward IS
 
     SIGNAL pc_out : unsigned(6 DOWNTO 0);
     SIGNAL somador_out : unsigned(6 DOWNTO 0);
+    SIGNAL mux_2x1 : unsigned(6 DOWNTO 0);
 
 BEGIN
 
@@ -38,7 +41,7 @@ BEGIN
         clk => clk,
         rst => rst,
         wr_en => wr_en,
-        data_in => somador_out,
+        data_in => mux_2x1,
         data_out => pc_out
     );
 
@@ -46,6 +49,9 @@ BEGIN
         entrada => pc_out,
         saida => somador_out
     );
+
+    mux_2x1 <= data_in WHEN jump_ctrl = '1' ELSE
+        somador_out;
 
     data_out <= somador_out;
 
