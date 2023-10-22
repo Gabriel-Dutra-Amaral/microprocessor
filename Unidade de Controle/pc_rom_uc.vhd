@@ -31,6 +31,7 @@ ARCHITECTURE a_pc_rom_uc OF pc_rom_uc IS
             rst : IN STD_LOGIC;
             wr_en_pc : OUT STD_LOGIC;
             seletor_jump : OUT STD_LOGIC;
+            saida_jump : OUT unsigned(6 DOWNTO 0);
             saida_de_instrucao : OUT unsigned(15 DOWNTO 0)
         );
     END COMPONENT;
@@ -38,6 +39,8 @@ ARCHITECTURE a_pc_rom_uc OF pc_rom_uc IS
     SIGNAL saida_rom_entrada_uc : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL saida_uc_para_pc_wr_en : STD_LOGIC := '0';
     SIGNAL saida_uc_para_pc_jump_en : STD_LOGIC := '0';
+    SIGNAL saida_jump : unsigned(6 DOWNTO 0);
+    SIGNAL mux_2x1 : unsigned(6 downto 0);
 
 BEGIN
 
@@ -45,7 +48,7 @@ BEGIN
         clk => clk,
         wr_en => saida_uc_para_pc_wr_en,
         rst => rst,
-        endereco_entrada => endereco_entrada,
+        endereco_entrada => mux_2x1,
         seletor_jump => saida_uc_para_pc_jump_en,
         rom_out => saida_rom_entrada_uc
     );
@@ -56,7 +59,12 @@ BEGIN
         rst => rst,
         wr_en_pc => saida_uc_para_pc_wr_en,
         seletor_jump => saida_uc_para_pc_jump_en,
+        saida_jump => saida_jump,
         saida_de_instrucao => saida_de_instrucao
     );
+
+    mux_2x1 <= endereco_entrada WHEN saida_uc_para_pc_jump_en = '0' ELSE
+        saida_jump WHEN saida_uc_para_pc_jump_en = '1' ELSE
+        "0000000";
 
 END ARCHITECTURE;

@@ -15,7 +15,7 @@ ARCHITECTURE a_rom OF rom IS
     CONSTANT conteudo_rom : mem := (
         -- caso endereco => conteudo
         0 => "1001110100000000", -- NOP -> OPCODE -> 9D -> 1001 1101
-        1 => "1111110000000010", -- JUMP -> OPCODE -> FC -> 1111 1100 - endereco depois
+        1 => "1111110000001111", -- JUMP -> OPCODE -> FC -> 1111 1100 - endereco depois
         2 => "0000000000000011",
         3 => "0000000000000100",
         4 => "1000000000000001",
@@ -25,6 +25,7 @@ ARCHITECTURE a_rom OF rom IS
         8 => "0000000000000001",
         9 => "0000000000000000",
         10 => "0000000000000000",
+        15 => "1111110000000101",
         127 => "1111111111111111",
         -- abaixo: casos omissos => (zero em todos os bits)
         OTHERS => (OTHERS => '0')
