@@ -53,6 +53,4 @@ BEGIN
         dado => rom_out
     );
 
-    
-
 END ARCHITECTURE;
