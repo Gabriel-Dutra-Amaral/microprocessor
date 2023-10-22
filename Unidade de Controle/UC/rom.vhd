@@ -14,8 +14,8 @@ ARCHITECTURE a_rom OF rom IS
     TYPE mem IS ARRAY (0 TO 127) OF unsigned(15 DOWNTO 0);
     CONSTANT conteudo_rom : mem := (
         -- caso endereco => conteudo
-        0 => "0000000000000001",
-        1 => "0000000000000010",
+        0 => "1001110100000000", -- NOP -> OPCODE -> 9D -> 1001 1101
+        1 => "1111110000000010", -- JUMP -> OPCODE -> FC -> 1111 1100 - endereco depois
         2 => "0000000000000011",
         3 => "0000000000000100",
         4 => "1000000000000001",

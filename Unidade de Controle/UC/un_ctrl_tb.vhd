@@ -12,8 +12,8 @@ ARCHITECTURE a_un_ctrl_tb OF un_ctrl_tb IS
             entrada_instrucao : IN unsigned(6 DOWNTO 0);
             clk : IN STD_LOGIC;
             rst : IN STD_LOGIC;
-            jump_ctrl : in std_logic;
-            saida : out unsigned(15 downto 0)
+            jump_ctrl : IN STD_LOGIC;
+            saida : OUT unsigned(15 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -30,7 +30,7 @@ BEGIN
         clk => clk,
         rst => rst,
         jump_ctrl => seletor_jump,
-        saida => rom_out 
+        saida => rom_out
     );
 
     rst_global : PROCESS
@@ -64,7 +64,7 @@ BEGIN
         WAIT FOR 100 ns;
 
         endereco_entrada <= "0001100"; -- Pode começar ou do zero ou do endereco_entrada
-       seletor_jump <= '0'; -- Se 1 -> endereco_entrada
+        seletor_jump <= '0'; -- Se 1 -> endereco_entrada
         WAIT FOR 100 ns;
 
         seletor_jump <= '1'; -- Coloca endereco_entrada no pc
