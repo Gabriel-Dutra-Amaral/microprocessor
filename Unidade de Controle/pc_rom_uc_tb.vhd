@@ -9,7 +9,6 @@ ARCHITECTURE a_pc_rom_uc_tb OF pc_rom_uc_tb IS
 
     COMPONENT pc_rom_uc IS
         PORT (
-            endereco_entrada : IN unsigned(6 DOWNTO 0);
             rst : IN STD_LOGIC;
             clk : IN STD_LOGIC;
             saida_de_instrucao : OUT unsigned(15 DOWNTO 0)
@@ -17,7 +16,6 @@ ARCHITECTURE a_pc_rom_uc_tb OF pc_rom_uc_tb IS
     END COMPONENT;
 
     SIGNAL clk, wr_en, rst, seletor_jump : STD_LOGIC := '0';
-    SIGNAL endereco_entrada : unsigned(6 DOWNTO 0) := "0000000";
     SIGNAL saida_de_instrucao : unsigned(15 DOWNTO 0) := "0000000000000000";
     CONSTANT period_time : TIME := 100 ns;
     SIGNAL finished : STD_LOGIC := '0';
@@ -25,7 +23,6 @@ ARCHITECTURE a_pc_rom_uc_tb OF pc_rom_uc_tb IS
 BEGIN
 
     utt : pc_rom_uc PORT MAP(
-        endereco_entrada => endereco_entrada,
         rst => rst,
         clk => clk,
         saida_de_instrucao => saida_de_instrucao
@@ -41,7 +38,7 @@ BEGIN
 
     sim_time_proc : PROCESS
     BEGIN
-        WAIT FOR period_time * 20;
+        WAIT FOR period_time * 128;
         finished <= '1';
         WAIT;
     END PROCESS sim_time_proc;
@@ -56,14 +53,5 @@ BEGIN
         END LOOP;
         WAIT;
     END PROCESS clk_proc;
-
-    PROCESS
-    BEGIN
-        WAIT FOR 100 ns;
-
-        endereco_entrada <= "0000000";
-
-        WAIT;
-    END PROCESS;
 
 END ARCHITECTURE;

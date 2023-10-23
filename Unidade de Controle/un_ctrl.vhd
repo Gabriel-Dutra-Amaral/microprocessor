@@ -39,8 +39,7 @@ BEGIN
     wr_en_pc <= '1' WHEN state = '1' ELSE
         '0';
 
-    saida_de_instrucao <= leitura_de_instrucao WHEN state = '0' ELSE
-        "0000000000000000";
+    saida_de_instrucao <= leitura_de_instrucao;
 
     opcode <= leitura_de_instrucao(15 DOWNTO 8);
     saida_endereco <= leitura_de_instrucao(6 DOWNTO 0);

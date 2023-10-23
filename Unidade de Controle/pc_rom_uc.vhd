@@ -4,7 +4,6 @@ USE ieee.numeric_std.ALL;
 
 ENTITY pc_rom_uc IS
     PORT (
-        endereco_entrada : IN unsigned(6 DOWNTO 0);
         rst : IN STD_LOGIC;
         clk : IN STD_LOGIC;
         saida_de_instrucao : OUT unsigned(15 DOWNTO 0)
@@ -39,8 +38,8 @@ ARCHITECTURE a_pc_rom_uc OF pc_rom_uc IS
     SIGNAL saida_rom_entrada_uc : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL saida_uc_para_pc_wr_en : STD_LOGIC := '0';
     SIGNAL saida_uc_para_pc_jump_en : STD_LOGIC := '0';
-    SIGNAL saida_jump : unsigned(6 DOWNTO 0);
-    SIGNAL mux_2x1 : unsigned(6 downto 0);
+    SIGNAL saida_jump : unsigned(6 DOWNTO 0) := "0000000";
+    SIGNAL mux_2x1 : unsigned(6 DOWNTO 0) := "0000000";
 
 BEGIN
 
@@ -63,8 +62,7 @@ BEGIN
         saida_de_instrucao => saida_de_instrucao
     );
 
-    mux_2x1 <= endereco_entrada WHEN saida_uc_para_pc_jump_en = '0' ELSE
-        saida_jump WHEN saida_uc_para_pc_jump_en = '1' ELSE
+    mux_2x1 <= saida_jump WHEN saida_uc_para_pc_jump_en = '1' ELSE
         "0000000";
 
 END ARCHITECTURE;
