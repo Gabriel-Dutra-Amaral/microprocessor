@@ -10,7 +10,8 @@ ENTITY un_ctrl IS
         wr_en_pc : OUT STD_LOGIC;
         seletor_jump : OUT STD_LOGIC;
         saida_jump : OUT unsigned(9 DOWNTO 0);
-        saida_de_instrucao : OUT unsigned(15 DOWNTO 0)
+        saida_de_instrucao : OUT unsigned(15 DOWNTO 0);
+        sel_mux_ula : OUT unsigned(1 downto 0);
     );
 END ENTITY;
 
