@@ -36,7 +36,7 @@ ARCHITECTURE a_processador OF processador IS
             rst : IN STD_LOGIC;
             wr_en_pc : OUT STD_LOGIC;
             seletor_jump : OUT STD_LOGIC;
-            saida_jump : OUT unsigned(6 DOWNTO 0);
+            saida_jump : OUT unsigned(9 DOWNTO 0);
             saida_de_instrucao : OUT unsigned(15 DOWNTO 0)
         );
     END COMPONENT;
