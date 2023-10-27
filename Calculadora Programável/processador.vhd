@@ -5,13 +5,7 @@ USE ieee.numeric_std.ALL;
 ENTITY processador IS
     PORT (
         clk : IN STD_LOGIC;
-        rst : IN STD_LOGIC;
-        estado : OUT unsigned(1 downto 0);
-        pc : OUT unsigned(9 downto 0);
-        registrador_de_instrucao :OUT unsigned(15 downto 0);
-        saida_banco_reg1 : OUT unsigned(15 downto 0);
-        saida_banco_reg2 : OUT unsigned(15 downto 0);
-        saida_ula : OUT unsigned(15 downto 0)
+        rst : IN STD_LOGIC
     );
 END ENTITY;
 
@@ -49,7 +43,8 @@ ARCHITECTURE a_processador OF processador IS
             sel_op_ula : OUT unsigned(1 DOWNTO 0);
             select_reg1_banco : OUT unsigned(2 DOWNTO 0);
             select_reg2_banco : OUT unsigned(2 DOWNTO 0);
-            valor_imediato_op : OUT unsigned(15 DOWNTO 0)
+            valor_imediato_op : OUT unsigned(15 DOWNTO 0);
+            controle_mov : OUT STD_LOGIC
         );
     END COMPONENT;
 
@@ -76,8 +71,8 @@ ARCHITECTURE a_processador OF processador IS
         );
     END COMPONENT;
 
-    SIGNAL clk : STD_LOGIC; -- clk global
-    SIGNAL rst : STD_LOGIC; -- rst global
+    --SIGNAL clk : STD_LOGIC; -- clk global
+    --SIGNAL rst : STD_LOGIC; -- rst global
     SIGNAL wr_en_pc : STD_LOGIC; -- entre pc_forward e un_ctrl
     SIGNAL controle_de_salto : STD_LOGIC; -- entre pc_forward e un_ctrl
     SIGNAL entrada_pc_forward : unsigned(9 DOWNTO 0); -- vem da un_ctrl
@@ -92,6 +87,8 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL saida_reg2_banco : unsigned(15 DOWNTO 0);
     SIGNAL mux_ula_reg_imm : unsigned(15 downto 0);
     SIGNAL saida_ula : unsigned(15 downto 0);
+    SIGNAL mux_registrador_banco : unsigned(2 downto 0);
+    SIGNAL controle_mov : STD_LOGIC;
 
 BEGIN
 
@@ -122,14 +119,15 @@ BEGIN
         sel_op_ula => sel_op_ula, -- maior,menor,soma,sub
         select_reg1_banco => select_reg1_banco, -- acumulador
         select_reg2_banco => select_reg2_banco, -- registrador escolhido
-        valor_imediato_op => valor_imediato_op -- vai para o mux da ula, entrada 1 dela
+        valor_imediato_op => valor_imediato_op, -- vai para o mux da ula, entrada 1 dela
+        controle_mov => controle_mov -- vem da uc para o banco
     );
 
     banco_de_registradores_0 : banco_de_registradores PORT MAP(
         read_reg1 => select_reg1_banco,
         read_reg2 => select_reg2_banco,
-        write_reg => , -- seleciona o registrador que vai receber o resultado
-        reg_write => , -- habilita escrita dentro do banco
+        write_reg => mux_registrador_banco, -- seleciona o registrador que vai receber o resultado
+        reg_write => '0', -- habilita escrita dentro do banco
         clk => clk,
         rst => rst,
         read_data1 => saida_reg1_banco,

@@ -15,7 +15,8 @@ ENTITY un_ctrl IS
         sel_op_ula : OUT unsigned(1 DOWNTO 0);
         select_reg1_banco : OUT unsigned(2 DOWNTO 0);
         select_reg2_banco : OUT unsigned(2 DOWNTO 0);
-        valor_imediato_op : OUT unsigned(15 DOWNTO 0)
+        valor_imediato_op : OUT unsigned(15 DOWNTO 0);
+        controle_mov : OUT STD_LOGIC
     );
 END ENTITY;
 
@@ -46,7 +47,7 @@ BEGIN
     wr_en_pc <= '1' WHEN state = '1' ELSE
         '0';
 
-    --DECODE
+    --DECODE e EXECUTE
     saida_de_instrucao <= leitura_de_instrucao;
     opcode <= leitura_de_instrucao(15 DOWNTO 12); -- 4-bit MSB com os opcodes
     registrador_instr <= leitura_de_instrucao(2 DOWNTO 0); -- 3-bit LSB
@@ -60,8 +61,6 @@ BEGIN
 
     saida_jump <= saida_endereco WHEN opcode = "0001";
 
-    -- Fim Salto Incondicional
-
     -- ADD A, reg
 
     sel_op_ula <= "10" WHEN opcode = "0010";
@@ -72,9 +71,7 @@ BEGIN
 
     select_reg2_banco <= registrador_instr WHEN opcode = "0010"; -- Registrador
 
-    -- wr_en_banco <= '1' WHEN opcode = "0010"; -- Saida do banco enable
-
-    -- Fim ADD A, reg
+    controle_mov <= '0' WHEN opcode = "0010";
 
     -- ADD A, imm
 
@@ -86,9 +83,7 @@ BEGIN
 
     valor_imediato_op <= imm_op WHEN opcode = "0011"; -- Saida da ULA
 
-    -- wr_en_banco <= '1' WHEN opcode = "0011"; -- Saida do banco enable
-
-    -- Fim ADD A, imm
+    controle_mov <= '0' WHEN opcode = "0011";
 
     -- SUB A, reg
 
@@ -100,9 +95,7 @@ BEGIN
 
     select_reg2_banco <= registrador_instr WHEN opcode = "0100"; -- Registrador
 
-    -- wr_en_banco <= '1' WHEN opcode = "0100"; -- Saida do banco enable
-
-    --FIM SUB A, reg
+    controle_mov <= '0' WHEN opcode = "0100";
 
     -- SUB A, imm
 
@@ -114,9 +107,17 @@ BEGIN
 
     valor_imediato_op <= imm_op WHEN opcode = "0101"; -- Saida da ULA
 
-    -- wr_en_banco <= '1' WHEN opcode = "0101"; -- Saida do banco enable
+    controle_mov <= '0' WHEN opcode = "0101";
 
-    --FIM SUB A, imm
+    -- MOV dst,src
+
+    select_reg1_banco <= leitura_de_instrucao(2 DOWNTO 0) WHEN opcode = "1000";
+
+    select_reg2_banco <= leitura_de_instrucao(5 DOWNTO 3) WHEN opcode = "1000";
+
+    controle_mov <= '1' WHEN opcode = "1000";
+
+    -- Selecao do registrador a ser escrito no banco
 
 
 

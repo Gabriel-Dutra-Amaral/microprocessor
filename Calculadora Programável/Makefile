@@ -20,6 +20,10 @@ all:
 	ghdl -a 17_mux_2x1.vhd
 	ghdl -a 18_ula_e_banco.vhd
 	ghdl -a processador.vhd
+	ghdl -a processador_tb.vhd
+	ghdl -e processador_tb
+	ghdl -r processador_tb --wave=processador_tb.ghw
+	gtkwave processador_tb.ghw
 
 rm:
 
