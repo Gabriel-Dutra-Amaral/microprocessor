@@ -37,7 +37,13 @@ ARCHITECTURE a_processador OF processador IS
             wr_en_pc : OUT STD_LOGIC;
             seletor_jump : OUT STD_LOGIC;
             saida_jump : OUT unsigned(9 DOWNTO 0);
-            saida_de_instrucao : OUT unsigned(15 DOWNTO 0)
+            saida_de_instrucao : OUT unsigned(15 DOWNTO 0);
+            sel_mux_ula : OUT STD_LOGIC;
+            sel_op_ula : OUT unsigned(1 DOWNTO 0);
+            select_reg1_banco : OUT unsigned(2 DOWNTO 0);
+            select_reg2_banco : OUT unsigned(2 DOWNTO 0);
+            habilita_saida_banco : OUT STD_LOGIC;
+            valor_imediato_soma : OUT unsigned(15 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -69,11 +75,11 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL controle_de_salto : STD_LOGIC; -- entre pc_forward e un_ctrl
     SIGNAL entrada_pc_forward : unsigned(9 DOWNTO 0); -- vem da un_ctrl
     SIGNAL saida_pc_forward : unsigned(9 DOWNTO 0); -- vai pra rom
-    SIGNAL saida_rom_instrucao : unsigned(9 DOWNTO 0);
+    SIGNAL saida_rom_instrucao : unsigned(15 DOWNTO 0);
 
 BEGIN
 
-    pc_forward_0 : pc_forward PORT MAP (
+    pc_forward_0 : pc_forward PORT MAP(
         clk => clk,
         rst => rst,
         wr_en => wr_en_pc,
@@ -82,23 +88,29 @@ BEGIN
         saida_pc_forward => saida_pc_forward
     );
 
-    rom_0 : rom PORT MAP (
+    rom_0 : rom PORT MAP(
         clk => clk,
         entrada_rom => saida_pc_forward,
         saida_rom_dado => saida_rom_instrucao
     );
 
-    un_ctrl_0 : un_ctrl PORT MAP (
+    un_ctrl_0 : un_ctrl PORT MAP(
         leitura_de_instrucao => saida_rom_instrucao,
         clk => clk,
-        rst => rst,
+        rst => clk,
         wr_en_pc => wr_en_pc,
         seletor_jump => controle_de_salto,
         saida_jump => entrada_pc_forward,
-        saida_de_instrucao => saida_de_instrucao
+        saida_de_instrucao => ,
+        sel_mux_ula => ,
+        sel_op_ula => ,
+        select_reg1_banco => ,
+        select_reg2_banco => ,
+        habilita_saida_banco => ,
+        valor_imediato_soma => 
     );
 
-    banco_de_registradores_0 : banco_de_registradores PORT MAP (
+    banco_de_registradores_0 : banco_de_registradores PORT MAP(
         read_reg1 => read_data1,
         read_reg2 => read_data2,
         write_reg => write_reg,
@@ -110,7 +122,7 @@ BEGIN
         write_data => write_data
     );
 
-    ula_0 : ula PORT MAP (
+    ula_0 : ula PORT MAP(
         entrada_0 => entrada_0_ula
         entrada_1 => entrada_1_ula
         seletor_op => seletor_op_ula

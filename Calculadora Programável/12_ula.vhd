@@ -11,6 +11,7 @@ ENTITY ula IS
 END ENTITY;
 
 ARCHITECTURE a_ula OF ula IS
+
     COMPONENT maior IS
         PORT (
             x : IN unsigned(15 DOWNTO 0);
