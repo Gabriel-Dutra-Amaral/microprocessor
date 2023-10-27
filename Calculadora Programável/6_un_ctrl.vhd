@@ -12,11 +12,12 @@ ENTITY un_ctrl IS
         saida_jump : OUT unsigned(9 DOWNTO 0);
         saida_de_instrucao : OUT unsigned(15 DOWNTO 0);
         sel_mux_ula : OUT STD_LOGIC;
+        reg_write_o : OUT STD_LOGIC;
         sel_op_ula : OUT unsigned(1 DOWNTO 0);
         select_reg1_banco : OUT unsigned(2 DOWNTO 0);
         select_reg2_banco : OUT unsigned(2 DOWNTO 0);
         habilita_saida_banco : OUT STD_LOGIC;
-        valor_imediato_soma : OUT unsigned(15 DOWNTO 0)
+        valor_imediato_op : OUT unsigned(15 DOWNTO 0)
     );
 END ENTITY;
 
@@ -43,16 +44,16 @@ BEGIN
         rst => rst,
         estado => state
     );
-
+    --FETCH
     wr_en_pc <= '1' WHEN state = "10" ELSE
         '0';
 
+    --DECODE
     saida_de_instrucao <= leitura_de_instrucao;
-
     opcode <= leitura_de_instrucao(15 DOWNTO 12); -- 4-bit MSB com os opcodes
     registrador_instr <= leitura_de_instrucao(2 DOWNTO 0); -- 3-bit LSB
     saida_endereco <= leitura_de_instrucao(9 DOWNTO 0); -- Visualizar entrada
-    imm_sum <= "0000" & leitura_de_instrucao(11 DOWNTO 0);
+    imm_op <= "0000" & leitura_de_instrucao(11 DOWNTO 0);
 
     -- Salto Incondicional
 
@@ -85,12 +86,40 @@ BEGIN
 
     sel_mux_ula <= '1' WHEN opcode = "0011"; -- Usa imediato
 
-    valor_imediato_soma <= imm_sum WHEN opcode = "0011"; -- Saida da ULA
+    valor_imediato_op <= imm_op WHEN opcode = "0011"; -- Saida da ULA
 
-    habilita_saida_banco <= '1' WHEN opcode = "0010"; -- Saida do banco enable
+    habilita_saida_banco <= '1' WHEN opcode = "0011"; -- Saida do banco enable
 
     -- Fim ADD A, imm
 
-    -- 
+    -- SUB A, reg
+
+    sel_op_ula <= "11" WHEN opcode = "0100";
+
+    select_reg1_banco <= "111" WHEN opcode = "0100"; -- Acumulador
+
+    sel_mux_ula <= '0' WHEN opcode = "0100"; -- Usa o registrador
+
+    select_reg2_banco <= registrador_instr WHEN opcode = "0100"; -- Registrador
+
+    habilita_saida_banco <= '1' WHEN opcode = "0100"; -- Saida do banco enable
+
+    --FIM SUB A, reg
+
+    -- SUB A, imm
+
+    sel_op_ula <= "11" WHEN opcode = "0101";
+
+    select_reg1_banco <= "111" WHEN opcode = "0101"; -- Acumulador
+
+    sel_mux_ula <= '1' WHEN opcode = "0101"; -- Usa o imediato
+
+    valor_imediato_op <= imm_op WHEN opcode = "0101"; -- Saida da ULA
+
+    habilita_saida_banco <= '1' WHEN opcode = "0101"; -- Saida do banco enable
+
+    --FIM SUB A, imm
+
+
 
 END ARCHITECTURE;
