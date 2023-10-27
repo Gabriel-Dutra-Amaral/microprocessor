@@ -4,27 +4,23 @@ USE ieee.numeric_std.ALL;
 
 ENTITY maquina_de_estados IS
    PORT (
-      clk, rst : IN STD_LOGIC;
-      estado : OUT unsigned(1 DOWNTO 0)
+      clk : IN STD_LOGIC;
+      rst : IN STD_LOGIC;
+      estado : OUT STD_LOGIC
    );
 END ENTITY;
 
 ARCHITECTURE a_maquina_de_estados OF maquina_de_estados IS
 
-   SIGNAL estado_s : unsigned(1 DOWNTO 0);
+   SIGNAL estado_s : STD_LOGIC;
 
 BEGIN
-
-   PROCESS (clk, rst)
+   PROCESS (clk, rst) -- acionado se houver mudança em clk, rst 
    BEGIN
       IF rst = '1' THEN
-         estado_s <= "00";
+         estado_s <= '0';
       ELSIF rising_edge(clk) THEN
-         IF estado_s = "10" THEN
-            estado_s <= "00";
-         ELSE
-            estado_s <= estado_s + 1;
-         END IF;
+         estado_s <= NOT estado_s;
       END IF;
    END PROCESS;
 

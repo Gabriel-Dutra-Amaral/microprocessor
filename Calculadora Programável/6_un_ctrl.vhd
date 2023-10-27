@@ -12,11 +12,9 @@ ENTITY un_ctrl IS
         saida_jump : OUT unsigned(9 DOWNTO 0);
         saida_de_instrucao : OUT unsigned(15 DOWNTO 0);
         sel_mux_ula : OUT STD_LOGIC;
-        reg_write_o : OUT STD_LOGIC;
         sel_op_ula : OUT unsigned(1 DOWNTO 0);
         select_reg1_banco : OUT unsigned(2 DOWNTO 0);
         select_reg2_banco : OUT unsigned(2 DOWNTO 0);
-        habilita_saida_banco : OUT STD_LOGIC;
         valor_imediato_op : OUT unsigned(15 DOWNTO 0)
     );
 END ENTITY;
@@ -27,15 +25,15 @@ ARCHITECTURE a_un_ctrl OF un_ctrl IS
         PORT (
             clk : IN STD_LOGIC;
             rst : IN STD_LOGIC;
-            estado : OUT unsigned(1 downto 0)
+            estado : OUT STD_LOGIC
         );
     END COMPONENT;
 
-    SIGNAL state : unsigned(1 DOWNTO 0) := "00";
+    SIGNAL state : STD_LOGIC := '0';
     SIGNAL opcode : unsigned(3 DOWNTO 0) := "0000";
     SIGNAL saida_endereco : unsigned(9 DOWNTO 0) := "0000000000";
     SIGNAL registrador_instr : unsigned(2 downto 0) := "000";
-    SIGNAL imm_sum : unsigned(15 downto 0) := "0000000000000000";
+    SIGNAL imm_op : unsigned(15 downto 0) := "0000000000000000";
 
 BEGIN
 
@@ -45,7 +43,7 @@ BEGIN
         estado => state
     );
     --FETCH
-    wr_en_pc <= '1' WHEN state = "10" ELSE
+    wr_en_pc <= '1' WHEN state = '1' ELSE
         '0';
 
     --DECODE
@@ -74,7 +72,7 @@ BEGIN
 
     select_reg2_banco <= registrador_instr WHEN opcode = "0010"; -- Registrador
 
-    habilita_saida_banco <= '1' WHEN opcode = "0010"; -- Saida do banco enable
+    -- wr_en_banco <= '1' WHEN opcode = "0010"; -- Saida do banco enable
 
     -- Fim ADD A, reg
 
@@ -88,7 +86,7 @@ BEGIN
 
     valor_imediato_op <= imm_op WHEN opcode = "0011"; -- Saida da ULA
 
-    habilita_saida_banco <= '1' WHEN opcode = "0011"; -- Saida do banco enable
+    -- wr_en_banco <= '1' WHEN opcode = "0011"; -- Saida do banco enable
 
     -- Fim ADD A, imm
 
@@ -102,7 +100,7 @@ BEGIN
 
     select_reg2_banco <= registrador_instr WHEN opcode = "0100"; -- Registrador
 
-    habilita_saida_banco <= '1' WHEN opcode = "0100"; -- Saida do banco enable
+    -- wr_en_banco <= '1' WHEN opcode = "0100"; -- Saida do banco enable
 
     --FIM SUB A, reg
 
@@ -116,7 +114,7 @@ BEGIN
 
     valor_imediato_op <= imm_op WHEN opcode = "0101"; -- Saida da ULA
 
-    habilita_saida_banco <= '1' WHEN opcode = "0101"; -- Saida do banco enable
+    -- wr_en_banco <= '1' WHEN opcode = "0101"; -- Saida do banco enable
 
     --FIM SUB A, imm
 

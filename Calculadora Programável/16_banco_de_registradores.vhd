@@ -17,6 +17,7 @@ ENTITY banco_de_registradores IS
 END ENTITY;
 
 ARCHITECTURE a_banco_de_registradores OF banco_de_registradores IS
+
     COMPONENT reg16bits IS
         PORT (
             clk : IN STD_LOGIC;

@@ -4,7 +4,14 @@ USE ieee.numeric_std.ALL;
 
 ENTITY processador IS
     PORT (
-
+        clk : IN STD_LOGIC;
+        rst : IN STD_LOGIC;
+        estado : OUT unsigned(1 downto 0);
+        pc : OUT unsigned(9 downto 0);
+        registrador_de_instrucao :OUT unsigned(15 downto 0);
+        saida_banco_reg1 : OUT unsigned(15 downto 0);
+        saida_banco_reg2 : OUT unsigned(15 downto 0);
+        saida_ula : OUT unsigned(15 downto 0)
     );
 END ENTITY;
 
@@ -42,8 +49,7 @@ ARCHITECTURE a_processador OF processador IS
             sel_op_ula : OUT unsigned(1 DOWNTO 0);
             select_reg1_banco : OUT unsigned(2 DOWNTO 0);
             select_reg2_banco : OUT unsigned(2 DOWNTO 0);
-            habilita_saida_banco : OUT STD_LOGIC;
-            valor_imediato_soma : OUT unsigned(15 DOWNTO 0)
+            valor_imediato_op : OUT unsigned(15 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -63,7 +69,8 @@ ARCHITECTURE a_processador OF processador IS
 
     COMPONENT ula IS
         PORT (
-            entrada_0, entrada_1 : IN unsigned(15 DOWNTO 0);
+            entrada_0 : IN unsigned(15 DOWNTO 0);
+            entrada_1 : IN unsigned(15 DOWNTO 0);
             seletor_op : IN unsigned(1 DOWNTO 0);
             saida_ula : OUT unsigned(15 DOWNTO 0)
         );
@@ -76,6 +83,15 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL entrada_pc_forward : unsigned(9 DOWNTO 0); -- vem da un_ctrl
     SIGNAL saida_pc_forward : unsigned(9 DOWNTO 0); -- vai pra rom
     SIGNAL saida_rom_instrucao : unsigned(15 DOWNTO 0);
+    SIGNAL sel_mux_ula : STD_LOGIC;
+    SIGNAL sel_op_ula : unsigned(1 DOWNTO 0);
+    SIGNAL select_reg1_banco : unsigned(2 DOWNTO 0);
+    SIGNAL select_reg2_banco : unsigned(2 DOWNTO 0);
+    SIGNAL valor_imediato_op : unsigned(15 DOWNTO 0);
+    SIGNAL saida_reg1_banco : unsigned(15 DOWNTO 0);
+    SIGNAL saida_reg2_banco : unsigned(15 DOWNTO 0);
+    SIGNAL mux_ula_reg_imm : unsigned(15 downto 0);
+    SIGNAL saida_ula : unsigned(15 downto 0);
 
 BEGIN
 
@@ -95,38 +111,40 @@ BEGIN
     );
 
     un_ctrl_0 : un_ctrl PORT MAP(
-        leitura_de_instrucao => saida_rom_instrucao,
-        clk => clk,
-        rst => clk,
-        wr_en_pc => wr_en_pc,
-        seletor_jump => controle_de_salto,
-        saida_jump => entrada_pc_forward,
-        saida_de_instrucao => ,
-        sel_mux_ula => ,
-        sel_op_ula => ,
-        select_reg1_banco => ,
-        select_reg2_banco => ,
-        habilita_saida_banco => ,
-        valor_imediato_soma => 
+        leitura_de_instrucao => saida_rom_instrucao, -- vem da ROM
+        clk => clk, -- CLK geral
+        rst => rst, -- RST geral
+        wr_en_pc => wr_en_pc, -- JP
+        seletor_jump => controle_de_salto, -- JP
+        saida_jump => entrada_pc_forward, -- JP
+        saida_de_instrucao => saida_rom_instrucao, -- Fins de visualizacao
+        sel_mux_ula => sel_mux_ula, -- reg ou imm
+        sel_op_ula => sel_op_ula, -- maior,menor,soma,sub
+        select_reg1_banco => select_reg1_banco, -- acumulador
+        select_reg2_banco => select_reg2_banco, -- registrador escolhido
+        valor_imediato_op => valor_imediato_op -- vai para o mux da ula, entrada 1 dela
     );
 
     banco_de_registradores_0 : banco_de_registradores PORT MAP(
-        read_reg1 => read_data1,
-        read_reg2 => read_data2,
-        write_reg => write_reg,
-        reg_write => reg_write,
+        read_reg1 => select_reg1_banco,
+        read_reg2 => select_reg2_banco,
+        write_reg => , -- seleciona o registrador que vai receber o resultado
+        reg_write => , -- habilita escrita dentro do banco
         clk => clk,
         rst => rst,
-        read_data1 => read_data1,
-        read_data2 => read_data2,
-        write_data => write_data
+        read_data1 => saida_reg1_banco,
+        read_data2 => saida_reg2_banco,
+        write_data => saida_ula -- dados que serao escritos no registrador marcado acima
     );
 
     ula_0 : ula PORT MAP(
-        entrada_0 => entrada_0_ula
-        entrada_1 => entrada_1_ula
-        seletor_op => seletor_op_ula
+        entrada_0 => saida_reg1_banco,
+        entrada_1 => mux_ula_reg_imm,
+        seletor_op => sel_op_ula,
         saida_ula => saida_ula
     );
+
+    mux_ula_reg_imm <= saida_reg2_banco WHEN sel_mux_ula = '0' ELSE
+        valor_imediato_op;
 
 END ARCHITECTURE a_processador;

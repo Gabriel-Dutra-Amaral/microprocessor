@@ -19,6 +19,7 @@ all:
 	ghdl -a 16_banco_de_registradores.vhd
 	ghdl -a 17_mux_2x1.vhd
 	ghdl -a 18_ula_e_banco.vhd
+	ghdl -a processador.vhd
 
 rm:
 
