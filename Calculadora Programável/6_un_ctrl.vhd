@@ -96,7 +96,7 @@ BEGIN
     imm_op;
 
     --FETCH
-    wr_en_pc <= '1' WHEN state = '1' ELSE
+    wr_en_pc <= '1' WHEN state = '0' ELSE
         '0';
 
     --DECODE e EXECUTE
@@ -179,6 +179,10 @@ BEGIN
     
     --constante ou registrador
     sel_mux_ula <= sel_k_reg;
+    
+    --EXECUTE 
+    write_reg <= '1' WHEN state = '1' AND (opcode = "1000" OR opcode = "0100" OR opcode = "0010") else
+        '0';
 
     wr_reg <= write_reg;
 
