@@ -8,6 +8,7 @@ ENTITY un_ctrl IS
         clk : IN STD_LOGIC;
         rst : IN STD_LOGIC;
         wr_en_pc : OUT STD_LOGIC;
+        wr_reg : OUT STD_LOGIC;
         seletor_jump : OUT STD_LOGIC;
         saida_jump : OUT unsigned(9 DOWNTO 0);
         saida_de_instrucao : OUT unsigned(15 DOWNTO 0);
@@ -30,11 +31,35 @@ ARCHITECTURE a_un_ctrl OF un_ctrl IS
         );
     END COMPONENT;
 
-    SIGNAL state : STD_LOGIC := '0';
+    COMPONENT banco_de_registradores is
+        PORT (
+        read_reg1 : IN unsigned(2 DOWNTO 0);
+        read_reg2 : IN unsigned(2 DOWNTO 0);
+        write_reg : IN unsigned(2 DOWNTO 0);
+        reg_write : IN STD_LOGIC;
+        clk : IN STD_LOGIC;
+        rst : IN STD_LOGIC;
+        read_data1 : OUT unsigned(15 DOWNTO 0);
+        read_data2 : OUT unsigned(15 DOWNTO 0);
+        write_data : IN unsigned(15 DOWNTO 0)
+    );
+    END COMPONENT;
+
+    COMPONENT ula is
+        PORT (
+        entrada_0, entrada_1 : IN unsigned(15 DOWNTO 0);
+        seletor_op : IN unsigned(1 DOWNTO 0);
+        saida_ula : OUT unsigned(15 DOWNTO 0)
+    );
+    END COMPONENT;
+
+    SIGNAL state, write_reg, sel_k_reg : STD_LOGIC := '0';
     SIGNAL opcode : unsigned(3 DOWNTO 0) := "0000";
     SIGNAL saida_endereco : unsigned(9 DOWNTO 0) := "0000000000";
-    SIGNAL registrador_instr : unsigned(2 downto 0) := "000";
+    SIGNAL registrador_instr, reg1, reg2 : unsigned(2 downto 0) := "000";
     SIGNAL imm_op : unsigned(15 downto 0) := "0000000000000000";
+    SIGNAL data1, mux_2x1_banco, mux_2x1_ula, data2, ula_out : unsigned(15 downto 0) :="0000000000000000";
+    SIGNAL seletor_ula : unsigned(1 downto 0);
 
 BEGIN
 
@@ -43,6 +68,33 @@ BEGIN
         rst => rst,
         estado => state
     );
+
+    banco_0 : banco_de_registradores PORT MAP(
+        
+        read_reg1 => reg1,
+        read_reg2 => reg2,
+        write_reg => registrador_instr,
+        reg_write => write_reg,
+        clk => clk,
+        rst => rst,
+        read_data1 => data1,
+        read_data2 => data2,
+        write_data => mux_2x1_banco
+    );
+
+    ula_o : ula PORT MAP(
+        entrada_0 => data1,
+        entrada_1 => mux_2x1_ula,
+        saida_ula => ula_out,
+        seletor_op => seletor_ula
+    );
+
+    mux_2x1_banco <= ula_out WHEN sel_k_reg = '0' else
+        imm_op;
+    
+    mux_2x1_ula <= data2 WHEN sel_k_reg = '0' else
+    imm_op;
+
     --FETCH
     wr_en_pc <= '1' WHEN state = '1' ELSE
         '0';
@@ -63,23 +115,23 @@ BEGIN
 
     -- ADD A, reg
 
-    sel_op_ula <= "10" WHEN opcode = "0010";
+    seletor_ula <= "10" WHEN opcode = "0010";
 
-    select_reg1_banco <= "111" WHEN opcode = "0010"; -- Acumulador
+    reg1 <= "111" WHEN opcode = "0010"; -- Acumulador
 
-    sel_mux_ula <= '0' WHEN opcode = "0010"; -- Usa o registrador
+    sel_k_reg <= '0' WHEN opcode = "0010"; -- Usa o registrador
 
-    select_reg2_banco <= registrador_instr WHEN opcode = "0010"; -- Registrador
+    reg2 <= registrador_instr WHEN opcode = "0010"; -- Registrador
 
     controle_mov <= '0' WHEN opcode = "0010";
 
     -- ADD A, imm
 
-    sel_op_ula <= "10" WHEN opcode = "0011";
+    seletor_ula <= "10" WHEN opcode = "0011";
 
-    select_reg1_banco <= "111" WHEN opcode = "0011"; -- Acumulador
+    reg1 <= "111" WHEN opcode = "0011"; -- Acumulador
 
-    sel_mux_ula <= '1' WHEN opcode = "0011"; -- Usa imediato
+    sel_k_reg <= '1' WHEN opcode = "0011"; -- Usa imediato
 
     valor_imediato_op <= imm_op WHEN opcode = "0011"; -- Saida da ULA
 
@@ -87,23 +139,23 @@ BEGIN
 
     -- SUB A, reg
 
-    sel_op_ula <= "11" WHEN opcode = "0100";
+    seletor_ula <= "11" WHEN opcode = "0100";
 
-    select_reg1_banco <= "111" WHEN opcode = "0100"; -- Acumulador
+    reg1 <= "111" WHEN opcode = "0100"; -- Acumulador
 
-    sel_mux_ula <= '0' WHEN opcode = "0100"; -- Usa o registrador
+    sel_k_reg <= '0' WHEN opcode = "0100"; -- Usa o registrador
 
-    select_reg2_banco <= registrador_instr WHEN opcode = "0100"; -- Registrador
+    reg2 <= registrador_instr WHEN opcode = "0100"; -- Registrador
 
     controle_mov <= '0' WHEN opcode = "0100";
 
     -- SUB A, imm
 
-    sel_op_ula <= "11" WHEN opcode = "0101";
+    seletor_ula <= "11" WHEN opcode = "0101";
 
-    select_reg1_banco <= "111" WHEN opcode = "0101"; -- Acumulador
+    reg1 <= "111" WHEN opcode = "0101"; -- Acumulador
 
-    sel_mux_ula <= '1' WHEN opcode = "0101"; -- Usa o imediato
+    sel_k_reg <= '1' WHEN opcode = "0101"; -- Usa o imediato
 
     valor_imediato_op <= imm_op WHEN opcode = "0101"; -- Saida da ULA
 
@@ -111,14 +163,23 @@ BEGIN
 
     -- MOV dst,src
 
-    select_reg1_banco <= leitura_de_instrucao(2 DOWNTO 0) WHEN opcode = "1000";
+    reg1 <= leitura_de_instrucao(2 DOWNTO 0) WHEN opcode = "1000";
 
-    select_reg2_banco <= leitura_de_instrucao(5 DOWNTO 3) WHEN opcode = "1000";
+    reg2 <= leitura_de_instrucao(5 DOWNTO 3) WHEN opcode = "1000";
 
     controle_mov <= '1' WHEN opcode = "1000";
 
     -- Selecao do registrador a ser escrito no banco
 
+    select_reg1_banco <= reg1;
+    select_reg2_banco <= reg2;
+    
+    --operacao da ula
+    sel_op_ula <= seletor_ula;
+    
+    --constante ou registrador
+    sel_mux_ula <= sel_k_reg;
 
+    wr_reg <= write_reg;
 
 END ARCHITECTURE;
