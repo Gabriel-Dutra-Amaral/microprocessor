@@ -40,11 +40,12 @@ ARCHITECTURE a_processador OF processador IS
             saida_jump : OUT unsigned(9 DOWNTO 0);
             reg1 : OUT unsigned(2 DOWNTO 0);
             reg2 : OUT unsigned(2 DOWNTO 0);
-            salvar_resultado : OUT STD_LOGIC;
-            salva_registrador : OUT unsigned(2 DOWNTO 0);
+            wr_result_en : OUT STD_LOGIC;
+            register_code : OUT unsigned(2 DOWNTO 0);
             valor_imediato_op : OUT unsigned(15 DOWNTO 0);
             seletor_ula : OUT unsigned(2 DOWNTO 0);
-            imediato_op : OUT STD_LOGIC
+            imediato_op : OUT STD_LOGIC;
+            sel_mov_reg_imm : OUT STD_LOGIC
         );
     END COMPONENT;
 
@@ -88,6 +89,7 @@ ARCHITECTURE a_processador OF processador IS
 
     -- Unidade de Controle --
     SIGNAL valor_imediato_op : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL sel_mov_reg_imm : STD_LOGIC := '0';
 
     -- ULA --
     SIGNAL seleciona_op_ula : unsigned(2 DOWNTO 0) := "000";
@@ -121,11 +123,12 @@ BEGIN
         saida_jump => valor_jump,
         reg1 => entrada_reg1,
         reg2 => entrada_reg2,
-        salvar_resultado => escreve_registrador,
-        salva_registrador => codigo_registrador,
+        wr_result_en => escreve_registrador,
+        register_code => codigo_registrador,
         valor_imediato_op => valor_imediato_op,
         seletor_ula => seleciona_op_ula,
-        imediato_op => eh_imediato
+        imediato_op => eh_imediato,
+        sel_mov_reg_imm => sel_mov_reg_imm
     );
 
     banco_0 : banco_de_registradores PORT MAP(
@@ -147,7 +150,7 @@ BEGIN
         saida_ula => saida_ula
     );
 
-    mux_reg_imm <= saida_reg2 WHEN eh_imediato = '0' ELSE
+    mux_reg_imm <= saida_reg2 WHEN sel_mov_reg_imm = '0' ELSE
         valor_imediato_op;
 
 END ARCHITECTURE a_processador;

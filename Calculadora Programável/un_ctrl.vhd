@@ -14,12 +14,13 @@ ENTITY un_ctrl IS
 
         reg1 : OUT unsigned(2 DOWNTO 0);
         reg2 : OUT unsigned(2 DOWNTO 0);
-        salvar_resultado : OUT STD_LOGIC;
-        salva_registrador : OUT unsigned(2 DOWNTO 0);
+        wr_result_en : OUT STD_LOGIC;
+        register_code : OUT unsigned(2 DOWNTO 0);
 
         valor_imediato_op : OUT unsigned(15 DOWNTO 0);
         seletor_ula : OUT unsigned(2 DOWNTO 0);
-        imediato_op : OUT STD_LOGIC
+        imediato_op : OUT STD_LOGIC;
+        sel_mov_reg_imm : OUT STD_LOGIC
     );
 END ENTITY;
 
@@ -39,11 +40,9 @@ ARCHITECTURE a_un_ctrl OF un_ctrl IS
     SIGNAL opcode : unsigned(3 DOWNTO 0) := "0000";
     SIGNAL entrada_uc : unsigned(15 DOWNTO 0) := "0000000000000000";
 
-    -- Program Counter --
-    SIGNAL endereco_de_salto : unsigned(9 DOWNTO 0) := "0000000000";
-
     -- Banco de Registradores --
-    SIGNAL registrador_instr : unsigned(2 DOWNTO 0) := "000";
+    SIGNAL registrador_src : unsigned(2 DOWNTO 0) := "000";
+    SIGNAL registrador_dst : unsigned(5 DOWNTO 3) := "000";
 
 BEGIN
 
@@ -55,17 +54,30 @@ BEGIN
 
     -- Decode --
     opcode <= leitura_de_instrucao(15 DOWNTO 12) WHEN estado_maq = "01";
-    registrador_instr <= leitura_de_instrucao(2 DOWNTO 0) WHEN estado_maq = "01";
-    imm_op <= "0000" & leitura_de_instrucao(11 DOWNTO 0) WHEN estado_maq = "01";
+
+    registrador_src <= leitura_de_instrucao(2 DOWNTO 0) WHEN estado_maq = "01";
+
+    registrador_dst <= leitura_de_instrucao(5 DOWNTO 3) WHEN estado_maq = "01";
+
+    imm_op <= "0000000000" & leitura_de_instrucao(10 DOWNTO 5) WHEN estado_maq = "01";
 
     -- Execute --
     wr_en_pc <= '1' WHEN estado_maq = "10" ELSE
         '0';
 
-    -- Salto Incondicional
-    seletor_jump <= '1' WHEN opcode = "0001" AND estado_maq = "10" ELSE
+    -- Salto Incondicional --
+    seletor_jump <= '1' WHEN (opcode = "0001" AND estado_maq = "10") ELSE
         '0';
+    saida_jump <= (leitura_de_instrucao(9 DOWNTO 0) - 1) WHEN (opcode = "0001" AND estado_maq = "10") ELSE
+        "0000000000";
 
-    saida_jump <= endereco_de_salto WHEN (opcode = "0001" AND estado_maq = "10");
+    -- MOV reg/imediato --
+    reg1 <= registrador_dst WHEN (opcode = "1000" AND estado_maq = "10") ELSE
+        "000";
+    reg2 <= registrador_src WHEN (opcode = "1000" AND estado_maq = "10") ELSE
+        "000";
+    sel_mov_reg_imm <= leitura_de_instrucao(11) WHEN (opcode = "1000" AND estado_maq = "10");
+
+    seletor_ula <= "100" WHEN (opcode = "1000" AND estado_maq = "10");
 
 END ARCHITECTURE;
