@@ -13,9 +13,9 @@ END ENTITY;
 ARCHITECTURE a_rom OF rom IS
     TYPE mem IS ARRAY (0 TO 640) OF unsigned(15 DOWNTO 0); -- 640 Bytes na EEPROM
     CONSTANT conteudo_rom : mem := (
-        0 => "0000000000000000", -- NOP
-        1 => "0000000000000000", -- NOP
-        2 => "0001000000000101", -- JP para end. 20
+        0 => "0000000000000001", -- NOP
+        1 => "0000000000000011", -- NOP
+        2 => "0001000000000000", -- JP para end. 20
         10 => "0011000000000101", -- ADD A, 5
         11 => "1000000000011111", -- MOV R3, A 
         12 => "0011000000000000", -- ADD A, 0
