@@ -49,8 +49,6 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL saida_pc : unsigned(9 DOWNTO 0) := "0000000000";
     -- Fim salto incondicional
 
-    
-
 BEGIN
 
     pc_0 : pc_forward PORT MAP(
