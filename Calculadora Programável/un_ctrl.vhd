@@ -7,9 +7,17 @@ ENTITY un_ctrl IS
         leitura_de_instrucao : IN unsigned(15 DOWNTO 0);
         clk : IN STD_LOGIC;
         rst : IN STD_LOGIC;
+
         wr_en_pc : OUT STD_LOGIC;
         seletor_jump : OUT STD_LOGIC;
-        saida_jump : OUT unsigned(9 DOWNTO 0)
+        saida_jump : OUT unsigned(9 DOWNTO 0);
+
+        reg1 : OUT unsigned(2 DOWNTO 0);
+        reg2 : OUT unsigned(2 DOWNTO 0);
+
+        valor_imediato_op : OUT unsigned(15 DOWNTO 0);
+        seletor_ula : OUT unsigned(1 DOWNTO 0);
+        imediato_op : OUT STD_LOGIC
     );
 END ENTITY;
 
@@ -19,69 +27,76 @@ ARCHITECTURE a_un_ctrl OF un_ctrl IS
         PORT (
             clk : IN STD_LOGIC;
             rst : IN STD_LOGIC;
-            estado : OUT STD_LOGIC
+            estado : OUT unsigned(1 DOWNTO 0)
         );
     END COMPONENT;
 
-    SIGNAL state, write_reg, sel_k_reg : STD_LOGIC := '0';
-    SIGNAL opcode : unsigned(3 DOWNTO 0) := "0000";
-    SIGNAL saida_endereco : unsigned(9 DOWNTO 0) := "0000000000";
-    SIGNAL registrador_instr, reg1, reg2 : unsigned(2 DOWNTO 0) := "000";
+    -- Unidade de Controle --
+    SIGNAL estado_maq : unsigned(1 DOWNTO 0) := "00";
     SIGNAL imm_op : unsigned(15 DOWNTO 0) := "0000000000000000";
-    SIGNAL data1, mux_2x1_banco, mux_2x1_ula, data2, ula_out : unsigned(15 DOWNTO 0) := "0000000000000000";
-    SIGNAL seletor_ula : unsigned(1 DOWNTO 0);
+    SIGNAL opcode : unsigned(3 DOWNTO 0) := "0000";
+
+    SIGNAL write_reg, sel_k_reg : STD_LOGIC := '0';
+
+    -- Program Counter --
+    SIGNAL jump_address : unsigned(9 DOWNTO 0) := "0000000000";
+
+    -- Banco de registradores --
+    SIGNAL registrador_instr : unsigned(2 DOWNTO 0) := "000";
 
 BEGIN
 
     state_mac : maquina_de_estados PORT MAP(
         clk => clk,
         rst => rst,
-        estado => state
+        estado => estado_maq
     );
 
-    --FETCH
+    -- Fetch: leitura da rom
 
-    wr_en_pc <= '1' WHEN state = '0' ELSE
+    -- Decode
+    opcode <= leitura_de_instrucao(15 DOWNTO 12) WHEN estado_maq = "01"; -- 4-bit MSB com os opcodes
+    registrador_instr <= leitura_de_instrucao(2 DOWNTO 0) WHEN estado_maq = "01"; -- 3-bit LSB
+    imm_op <= "0000" & leitura_de_instrucao(11 DOWNTO 0) WHEN estado_maq = "01"; -- imediato da instrucao
+
+    -- Execute
+    wr_en_pc <= '1' WHEN estado_maq = "10" ELSE
         '0';
 
-    --DECODE e EXECUTE
-
-    opcode <= leitura_de_instrucao(15 DOWNTO 12); -- 4-bit MSB com os opcodes
-
-    registrador_instr <= leitura_de_instrucao(2 DOWNTO 0); -- 3-bit LSB
-
-    saida_endereco <= leitura_de_instrucao(9 DOWNTO 0); -- Visualizar entrada
-
-    imm_op <= "0000" & leitura_de_instrucao(11 DOWNTO 0);
+    -- NOP
 
     -- Salto Incondicional
-
-    seletor_jump <= '1' WHEN opcode = "0001" ELSE
+    seletor_jump <= '1' WHEN opcode = "0001" AND estado_maq = "10" ELSE
         '0';
 
-    saida_jump <= saida_endereco WHEN opcode = "0001";
+    saida_jump <= jump_address WHEN opcode = "0001" AND estado_maq = "10" ELSE
+        "0000000000";
 
     -- ADD A, reg
+    --seletor_ula <= "10" WHEN opcode = "0010" AND estado_maq = "10" ELSE
+    --    "00";
 
-    --seletor_ula <= "10" WHEN opcode = "0010";
-
-    --reg1 <= "111" WHEN opcode = "0010"; -- Acumulador
+    reg1 <= "111" WHEN opcode = "0010" AND estado_maq = "10"; -- Acumulador
 
     --sel_k_reg <= '0' WHEN opcode = "0010"; -- Usa o registrador
 
-    --reg2 <= registrador_instr WHEN opcode = "0010"; -- Registrador
+    reg2 <= registrador_instr WHEN opcode = "0010" AND estado_maq = "10"; -- Registrador
 
     --controle_mov <= '0' WHEN opcode = "0010";
 
     -- ADD A, imm
 
-    --seletor_ula <= "10" WHEN opcode = "0011";
+    imediato_op <= '1' WHEN opcode = "0011" AND estado_maq = "10" ELSE
+        '0';
 
-    --reg1 <= "111" WHEN opcode = "0011"; -- Acumulador
+    --seletor_ula <= "10" WHEN opcode = "0011" AND estado_maq = "10" ELSE
+    --    "00";
+
+    reg1 <= "111" WHEN opcode = "0011" AND estado_maq = "10"; -- Acumulador
 
     --sel_k_reg <= '1' WHEN opcode = "0011"; -- Usa imediato
 
-    --valor_imediato_op <= imm_op WHEN opcode = "0011"; -- Saida da ULA
+    valor_imediato_op <= imm_op WHEN opcode = "0011" AND estado_maq = "10"; -- Saida da ULA
 
     --controle_mov <= '0' WHEN opcode = "0011";
 

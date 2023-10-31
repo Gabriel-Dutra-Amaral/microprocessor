@@ -35,7 +35,7 @@ BEGIN
 
     sim_time_proc : PROCESS
     BEGIN
-        WAIT FOR period_time * 255;
+        WAIT FOR period_time * 50;
         finished <= '1';
         WAIT;
     END PROCESS sim_time_proc;

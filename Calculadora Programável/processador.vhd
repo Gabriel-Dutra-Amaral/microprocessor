@@ -37,7 +37,35 @@ ARCHITECTURE a_processador OF processador IS
             rst : IN STD_LOGIC;
             wr_en_pc : OUT STD_LOGIC;
             seletor_jump : OUT STD_LOGIC;
-            saida_jump : OUT unsigned(9 DOWNTO 0)
+            saida_jump : OUT unsigned(9 DOWNTO 0);
+            reg1 : OUT unsigned(2 DOWNTO 0);
+            reg2 : OUT unsigned(2 DOWNTO 0);
+            valor_imediato_op : OUT unsigned(15 DOWNTO 0);
+            seletor_ula : OUT unsigned(1 DOWNTO 0);
+            imediato_op : OUT STD_LOGIC
+        );
+    END COMPONENT;
+
+    COMPONENT banco_de_registradores IS
+        PORT (
+            seleciona_registrador_1 : IN unsigned(2 DOWNTO 0);
+            seleciona_registrador_2 : IN unsigned(2 DOWNTO 0);
+            codigo_registrador : IN unsigned(2 DOWNTO 0);
+            escreve_saida : IN STD_LOGIC;
+            clk : IN STD_LOGIC;
+            rst : IN STD_LOGIC;
+            saida_registrador_1 : OUT unsigned(15 DOWNTO 0);
+            saida_registrador_2 : OUT unsigned(15 DOWNTO 0);
+            dado_registrador : IN unsigned(15 DOWNTO 0)
+        );
+    END COMPONENT;
+
+    COMPONENT ula IS
+        PORT (
+            entrada_0 : IN unsigned(15 DOWNTO 0);
+            entrada_1 : IN unsigned(15 DOWNTO 0);
+            seletor_op : IN unsigned(1 DOWNTO 0);
+            saida_ula : OUT unsigned(15 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -47,7 +75,21 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL ctrl_salto : STD_LOGIC := '0';
     SIGNAL valor_jump : unsigned(9 DOWNTO 0) := "0000000000";
     SIGNAL saida_pc : unsigned(9 DOWNTO 0) := "0000000000";
-    -- Fim salto incondicional
+
+    -- Banco de Registradores
+    SIGNAL entrada_reg1 : unsigned(2 DOWNTO 0) := "000";
+    SIGNAL entrada_reg2 : unsigned(2 DOWNTO 0) := "000";
+    SIGNAL saida_reg1 : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL saida_reg2 : unsigned(15 DOWNTO 0) := "0000000000000000";
+
+    -- Unidade de Controle
+    SIGNAL valor_imediato_op : unsigned(15 DOWNTO 0) := "0000000000000000";
+
+    -- ULA
+    SIGNAL seleciona_op_ula : unsigned(1 DOWNTO 0) := "00";
+    SIGNAL saida_ula : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL mux_reg_imm : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL eh_imediato : STD_LOGIC := '0';
 
 BEGIN
 
@@ -72,7 +114,34 @@ BEGIN
         rst => rst,
         wr_en_pc => wr_en_pc_uc,
         seletor_jump => ctrl_salto,
-        saida_jump => valor_jump
+        saida_jump => valor_jump,
+        reg1 => entrada_reg1,
+        reg2 => entrada_reg2,
+        valor_imediato_op => valor_imediato_op,
+        seletor_ula => seleciona_op_ula,
+        imediato_op => eh_imediato
     );
+
+    banco_0 : banco_de_registradores PORT MAP(
+        seleciona_registrador_1 => entrada_reg1,
+        seleciona_registrador_2 => entrada_reg2,
+        codigo_registrador => "000",
+        escreve_saida => '0',
+        clk => clk,
+        rst => rst,
+        saida_registrador_1 => saida_reg1,
+        saida_registrador_2 => saida_reg2,
+        dado_registrador => "0000000000000000"
+    );
+
+    ula_0 : ula PORT MAP(
+        entrada_0 => saida_reg1,
+        entrada_1 => mux_reg_imm,
+        seletor_op => seleciona_op_ula,
+        saida_ula => saida_ula
+    );
+
+    mux_reg_imm <= saida_reg2 WHEN eh_imediato = '0' ELSE
+        valor_imediato_op;
 
 END ARCHITECTURE a_processador;
