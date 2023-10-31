@@ -14,7 +14,7 @@ END ENTITY;
 
 ARCHITECTURE a_pc OF pc IS
 
-    SIGNAL registro : unsigned(9 DOWNTO 0);
+    SIGNAL registro : unsigned(9 DOWNTO 0) := "0000000000";
 
 BEGIN
     PROCESS (clk, rst, wr_en)

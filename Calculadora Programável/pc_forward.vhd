@@ -32,9 +32,9 @@ ARCHITECTURE a_pc_forward OF pc_forward IS
         );
     END COMPONENT;
 
-    SIGNAL saida_pc_entrada_somador : unsigned(9 DOWNTO 0);
-    SIGNAL saida_somador : unsigned(9 DOWNTO 0);
-    SIGNAL mux_2x1_salto_ou_somador : unsigned(9 DOWNTO 0);
+    SIGNAL saida_pc_entrada_somador : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL saida_somador : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL mux_2x1_salto_ou_somador : unsigned(9 DOWNTO 0) := "0000000000";
 
 BEGIN
 

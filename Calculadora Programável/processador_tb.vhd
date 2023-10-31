@@ -14,7 +14,8 @@ ARCHITECTURE a_processador_tb OF processador_tb IS
         );
     END COMPONENT;
 
-    SIGNAL clk, rst : STD_LOGIC := '0';
+    SIGNAL clk : STD_LOGIC := '0';
+    SIGNAL rst : STD_LOGIC := '0';
     CONSTANT period_time : TIME := 100 ns;
     SIGNAL finished : STD_LOGIC := '0';
 
@@ -35,7 +36,7 @@ BEGIN
 
     sim_time_proc : PROCESS
     BEGIN
-        WAIT FOR period_time * 50;
+        WAIT FOR period_time * 150;
         finished <= '1';
         WAIT;
     END PROCESS sim_time_proc;

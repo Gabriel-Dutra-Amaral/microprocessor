@@ -14,7 +14,7 @@ END ENTITY;
 
 ARCHITECTURE a_reg16bits OF reg16bits IS
 
-   SIGNAL registro : unsigned(15 DOWNTO 0);
+   SIGNAL registro : unsigned(15 DOWNTO 0) := "0000000000000000";
 
 BEGIN
    PROCESS (clk, rst, wr_en)

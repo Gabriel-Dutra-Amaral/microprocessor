@@ -14,10 +14,13 @@ ENTITY mux16bits IS
 END ENTITY;
 
 ARCHITECTURE a_mux16bits OF mux16bits IS
+
 BEGIN
+
         saida <= entr0 WHEN sel = "00" ELSE
                 entr1 WHEN sel = "01" ELSE
                 entr2 WHEN sel = "10" ELSE
                 entr3 WHEN sel = "11" ELSE
                 "0000000000000000";
+
 END ARCHITECTURE;

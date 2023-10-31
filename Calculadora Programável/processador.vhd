@@ -40,6 +40,8 @@ ARCHITECTURE a_processador OF processador IS
             saida_jump : OUT unsigned(9 DOWNTO 0);
             reg1 : OUT unsigned(2 DOWNTO 0);
             reg2 : OUT unsigned(2 DOWNTO 0);
+            salvar_resultado : OUT STD_LOGIC;
+            salva_registrador : OUT unsigned(2 DOWNTO 0);
             valor_imediato_op : OUT unsigned(15 DOWNTO 0);
             seletor_ula : OUT unsigned(1 DOWNTO 0);
             imediato_op : OUT STD_LOGIC
@@ -51,7 +53,7 @@ ARCHITECTURE a_processador OF processador IS
             seleciona_registrador_1 : IN unsigned(2 DOWNTO 0);
             seleciona_registrador_2 : IN unsigned(2 DOWNTO 0);
             codigo_registrador : IN unsigned(2 DOWNTO 0);
-            escreve_saida : IN STD_LOGIC;
+            escreve_registrador : IN STD_LOGIC;
             clk : IN STD_LOGIC;
             rst : IN STD_LOGIC;
             saida_registrador_1 : OUT unsigned(15 DOWNTO 0);
@@ -81,6 +83,8 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL entrada_reg2 : unsigned(2 DOWNTO 0) := "000";
     SIGNAL saida_reg1 : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL saida_reg2 : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL codigo_registrador : unsigned(2 DOWNTO 0) := "000";
+    SIGNAL escreve_registrador : STD_LOGIC := '0';
 
     -- Unidade de Controle
     SIGNAL valor_imediato_op : unsigned(15 DOWNTO 0) := "0000000000000000";
@@ -117,6 +121,8 @@ BEGIN
         saida_jump => valor_jump,
         reg1 => entrada_reg1,
         reg2 => entrada_reg2,
+        salvar_resultado => escreve_registrador,
+        salva_registrador => codigo_registrador,
         valor_imediato_op => valor_imediato_op,
         seletor_ula => seleciona_op_ula,
         imediato_op => eh_imediato
@@ -125,13 +131,13 @@ BEGIN
     banco_0 : banco_de_registradores PORT MAP(
         seleciona_registrador_1 => entrada_reg1,
         seleciona_registrador_2 => entrada_reg2,
-        codigo_registrador => "000",
-        escreve_saida => '0',
+        codigo_registrador => codigo_registrador,
+        escreve_registrador => escreve_registrador,
         clk => clk,
         rst => rst,
         saida_registrador_1 => saida_reg1,
         saida_registrador_2 => saida_reg2,
-        dado_registrador => "0000000000000000"
+        dado_registrador => saida_ula
     );
 
     ula_0 : ula PORT MAP(

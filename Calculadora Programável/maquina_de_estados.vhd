@@ -11,7 +11,7 @@ END ENTITY;
 
 ARCHITECTURE a_maquina_de_estados OF maquina_de_estados IS
 
-   SIGNAL estado_s : unsigned(1 DOWNTO 0);
+   SIGNAL estado_s : unsigned(1 DOWNTO 0) := "00";
 
 BEGIN
    PROCESS (clk, rst)

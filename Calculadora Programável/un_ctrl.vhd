@@ -14,6 +14,8 @@ ENTITY un_ctrl IS
 
         reg1 : OUT unsigned(2 DOWNTO 0);
         reg2 : OUT unsigned(2 DOWNTO 0);
+        salvar_resultado : OUT STD_LOGIC;
+        salva_registrador : OUT unsigned(2 DOWNTO 0);
 
         valor_imediato_op : OUT unsigned(15 DOWNTO 0);
         seletor_ula : OUT unsigned(1 DOWNTO 0);
@@ -35,8 +37,7 @@ ARCHITECTURE a_un_ctrl OF un_ctrl IS
     SIGNAL estado_maq : unsigned(1 DOWNTO 0) := "00";
     SIGNAL imm_op : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL opcode : unsigned(3 DOWNTO 0) := "0000";
-
-    SIGNAL write_reg, sel_k_reg : STD_LOGIC := '0';
+    SIGNAL entrada_uc : unsigned(15 DOWNTO 0) := "0000000000000000";
 
     -- Program Counter --
     SIGNAL jump_address : unsigned(9 DOWNTO 0) := "0000000000";
@@ -52,18 +53,14 @@ BEGIN
         estado => estado_maq
     );
 
-    -- Fetch: leitura da rom
+    -- Decode --
+    opcode <= leitura_de_instrucao(15 DOWNTO 12) WHEN estado_maq = "01";
+    registrador_instr <= leitura_de_instrucao(2 DOWNTO 0) WHEN estado_maq = "01";
+    imm_op <= "0000" & leitura_de_instrucao(11 DOWNTO 0) WHEN estado_maq = "01";
 
-    -- Decode
-    opcode <= leitura_de_instrucao(15 DOWNTO 12) WHEN estado_maq = "01"; -- 4-bit MSB com os opcodes
-    registrador_instr <= leitura_de_instrucao(2 DOWNTO 0) WHEN estado_maq = "01"; -- 3-bit LSB
-    imm_op <= "0000" & leitura_de_instrucao(11 DOWNTO 0) WHEN estado_maq = "01"; -- imediato da instrucao
-
-    -- Execute
+    -- Execute --
     wr_en_pc <= '1' WHEN estado_maq = "10" ELSE
         '0';
-
-    -- NOP
 
     -- Salto Incondicional
     seletor_jump <= '1' WHEN opcode = "0001" AND estado_maq = "10" ELSE
@@ -72,31 +69,42 @@ BEGIN
     saida_jump <= jump_address WHEN opcode = "0001" AND estado_maq = "10" ELSE
         "0000000000";
 
-    -- ADD A, reg
-    --seletor_ula <= "10" WHEN opcode = "0010" AND estado_maq = "10" ELSE
-    --    "00";
+    -- ADD A, reg --
 
-    reg1 <= "111" WHEN opcode = "0010" AND estado_maq = "10"; -- Acumulador
+    seletor_ula <= "10" WHEN (opcode = "0010" AND estado_maq = "10") ELSE
+        "00";
 
-    --sel_k_reg <= '0' WHEN opcode = "0010"; -- Usa o registrador
+    reg1 <= "111" WHEN (opcode = "0010" AND estado_maq = "10") ELSE
+        "000";
 
-    reg2 <= registrador_instr WHEN opcode = "0010" AND estado_maq = "10"; -- Registrador
+    reg2 <= registrador_instr WHEN (opcode = "0010" AND estado_maq = "10") ELSE
+        "000";
 
-    --controle_mov <= '0' WHEN opcode = "0010";
-
-    -- ADD A, imm
-
-    imediato_op <= '1' WHEN opcode = "0011" AND estado_maq = "10" ELSE
+    salvar_resultado <= '1' WHEN (opcode = "0010" AND estado_maq = "10") ELSE
         '0';
 
-    --seletor_ula <= "10" WHEN opcode = "0011" AND estado_maq = "10" ELSE
-    --    "00";
+    salva_registrador <= "111" WHEN (opcode = "0010" AND estado_maq = "10") ELSE
+        "000";
 
-    reg1 <= "111" WHEN opcode = "0011" AND estado_maq = "10"; -- Acumulador
+    -- ADD A, imm --
+
+    imediato_op <= '1' WHEN (opcode = "0011" AND estado_maq = "10") ELSE
+        '0';
+
+    seletor_ula <= "10" WHEN (opcode = "0011" AND estado_maq = "10");
+
+    reg1 <= "111" WHEN (opcode = "0011" AND estado_maq = "10");
+
+    valor_imediato_op <= imm_op WHEN (opcode = "0011" AND estado_maq = "10") ELSE
+        "0000000000000000";
+
+    salvar_resultado <= '1' WHEN (opcode = "0011" AND estado_maq = "10") ELSE
+        '0';
+
+    salva_registrador <= "111" WHEN (opcode = "0011" AND estado_maq = "10") ELSE
+        "000";
 
     --sel_k_reg <= '1' WHEN opcode = "0011"; -- Usa imediato
-
-    valor_imediato_op <= imm_op WHEN opcode = "0011" AND estado_maq = "10"; -- Saida da ULA
 
     --controle_mov <= '0' WHEN opcode = "0011";
 

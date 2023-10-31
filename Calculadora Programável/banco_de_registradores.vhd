@@ -7,7 +7,7 @@ ENTITY banco_de_registradores IS
         seleciona_registrador_1 : IN unsigned(2 DOWNTO 0);
         seleciona_registrador_2 : IN unsigned(2 DOWNTO 0);
         codigo_registrador : IN unsigned(2 DOWNTO 0);
-        escreve_saida : IN STD_LOGIC;
+        escreve_registrador : IN STD_LOGIC;
         clk : IN STD_LOGIC;
         rst : IN STD_LOGIC;
         saida_registrador_1 : OUT unsigned(15 DOWNTO 0);
@@ -51,30 +51,30 @@ ARCHITECTURE a_banco_de_registradores OF banco_de_registradores IS
         );
     END COMPONENT;
 
-    SIGNAL wr_en_0 : STD_LOGIC;
-    SIGNAL wr_en_1 : STD_LOGIC;
-    SIGNAL wr_en_2 : STD_LOGIC;
-    SIGNAL wr_en_3 : STD_LOGIC;
-    SIGNAL wr_en_4 : STD_LOGIC;
-    SIGNAL wr_en_5 : STD_LOGIC;
-    SIGNAL wr_en_6 : STD_LOGIC;
-    SIGNAL wr_en_7 : STD_LOGIC;
+    SIGNAL wr_en_0 : STD_LOGIC := '0';
+    SIGNAL wr_en_1 : STD_LOGIC := '0';
+    SIGNAL wr_en_2 : STD_LOGIC := '0';
+    SIGNAL wr_en_3 : STD_LOGIC := '0';
+    SIGNAL wr_en_4 : STD_LOGIC := '0';
+    SIGNAL wr_en_5 : STD_LOGIC := '0';
+    SIGNAL wr_en_6 : STD_LOGIC := '0';
+    SIGNAL wr_en_7 : STD_LOGIC := '0';
 
-    SIGNAL data_out_0 : unsigned(15 downto 0);
-    SIGNAL data_out_1 : unsigned(15 DOWNTO 0);
-    SIGNAL data_out_2 : unsigned(15 DOWNTO 0);
-    SIGNAL data_out_3 : unsigned(15 DOWNTO 0);
-    SIGNAL data_out_4 : unsigned(15 DOWNTO 0);
-    SIGNAL data_out_5 : unsigned(15 DOWNTO 0);
-    SIGNAL data_out_6 : unsigned(15 DOWNTO 0);
-    SIGNAL data_out_7 : unsigned(15 DOWNTO 0);
+    SIGNAL data_out_0 : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL data_out_1 : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL data_out_2 : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL data_out_3 : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL data_out_4 : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL data_out_5 : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL data_out_6 : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL data_out_7 : unsigned(15 DOWNTO 0) := "0000000000000000";
 
 BEGIN
     reg_0 : reg16bits PORT MAP(
         clk => clk,
         rst => rst,
         wr_en => wr_en_0,
-        data_in => dado_registrador,
+        data_in => data_out_0,
         data_out => data_out_0
     );
 
@@ -160,7 +160,7 @@ BEGIN
 
     decoder : decoder_3x8 PORT MAP(
         write_register => codigo_registrador,
-        write_enable => escreve_saida,
+        write_enable => escreve_registrador,
         saida(0) => wr_en_0,
         saida(1) => wr_en_1,
         saida(2) => wr_en_2,
