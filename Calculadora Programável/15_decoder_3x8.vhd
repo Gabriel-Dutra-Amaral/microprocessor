@@ -11,7 +11,9 @@ ENTITY decoder_3x8 IS
 END ENTITY;
 
 ARCHITECTURE a_decoder_3x8 OF decoder_3x8 IS
+
 BEGIN
+
     saida <= "00000001" WHEN write_register = "000" AND write_enable = '1' ELSE
         "00000010" WHEN write_register = "001" AND write_enable = '1' ELSE
         "00000100" WHEN write_register = "010" AND write_enable = '1' ELSE
@@ -21,4 +23,5 @@ BEGIN
         "01000000" WHEN write_register = "110" AND write_enable = '1' ELSE
         "10000000" WHEN write_register = "111" AND write_enable = '1' ELSE
         "00000000";
+
 END ARCHITECTURE;

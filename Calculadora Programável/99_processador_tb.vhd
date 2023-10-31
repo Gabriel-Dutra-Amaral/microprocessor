@@ -14,7 +14,7 @@ ARCHITECTURE a_processador_tb OF processador_tb IS
         );
     END COMPONENT;
 
-    SIGNAL clk, wr_en, rst, seletor_jump : STD_LOGIC := '0';
+    SIGNAL clk, rst : STD_LOGIC := '0';
     CONSTANT period_time : TIME := 100 ns;
     SIGNAL finished : STD_LOGIC := '0';
 

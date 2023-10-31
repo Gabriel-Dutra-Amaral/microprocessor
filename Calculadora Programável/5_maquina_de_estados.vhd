@@ -15,7 +15,7 @@ ARCHITECTURE a_maquina_de_estados OF maquina_de_estados IS
    SIGNAL estado_s : STD_LOGIC;
 
 BEGIN
-   PROCESS (clk, rst) -- acionado se houver mudança em clk, rst 
+   PROCESS (clk, rst)
    BEGIN
       IF rst = '1' THEN
          estado_s <= '0';

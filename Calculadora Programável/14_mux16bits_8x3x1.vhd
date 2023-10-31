@@ -19,6 +19,7 @@ END ENTITY;
 
 ARCHITECTURE a_mux16bits_8x3x1 OF mux16bits_8x3x1 IS
 BEGIN
+
         saida <= entr0 WHEN sel = "000" ELSE
                 entr1 WHEN sel = "001" ELSE
                 entr2 WHEN sel = "010" ELSE
@@ -28,4 +29,5 @@ BEGIN
                 entr6 WHEN sel = "110" ELSE
                 entr7 WHEN sel = "111" ELSE
                 "0000000000000000";
+
 END ARCHITECTURE;

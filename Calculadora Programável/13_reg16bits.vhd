@@ -13,9 +13,11 @@ ENTITY reg16bits IS
 END ENTITY;
 
 ARCHITECTURE a_reg16bits OF reg16bits IS
+
    SIGNAL registro : unsigned(15 DOWNTO 0);
+
 BEGIN
-   PROCESS (clk, rst, wr_en) -- acionado se houver mudança em clk, rst ou wr_en
+   PROCESS (clk, rst, wr_en)
    BEGIN
       IF rst = '1' THEN
          registro <= "0000000000000000";
@@ -26,5 +28,6 @@ BEGIN
       END IF;
    END PROCESS;
 
-   data_out <= registro; -- conexao direta, fora do processo
+   data_out <= registro;
+
 END ARCHITECTURE;
