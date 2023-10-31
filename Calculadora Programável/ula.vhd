@@ -4,8 +4,9 @@ USE ieee.numeric_std.ALL;
 
 ENTITY ula IS
     PORT (
-        entrada_0, entrada_1 : IN unsigned(15 DOWNTO 0);
-        seletor_op : IN unsigned(1 DOWNTO 0);
+        entrada_0 : IN unsigned(15 DOWNTO 0);
+        entrada_1 : IN unsigned(15 DOWNTO 0);
+        seletor_op : IN unsigned(2 DOWNTO 0);
         saida_ula : OUT unsigned(15 DOWNTO 0)
     );
 END ENTITY;
@@ -44,13 +45,22 @@ ARCHITECTURE a_ula OF ula IS
         );
     END COMPONENT;
 
+    COMPONENT mov IS
+        PORT (
+            x : IN unsigned(15 DOWNTO 0);
+            y : IN unsigned(15 DOWNTO 0);
+            mov_out : OUT unsigned(15 DOWNTO 0)
+        );
+    END COMPONENT;
+
     COMPONENT mux16bits IS
         PORT (
             entr0 : IN unsigned(15 DOWNTO 0);
             entr1 : IN unsigned(15 DOWNTO 0);
             entr2 : IN unsigned(15 DOWNTO 0);
             entr3 : IN unsigned(15 DOWNTO 0);
-            sel : IN unsigned(1 DOWNTO 0);
+            entr4 : IN unsigned(15 DOWNTO 0);
+            sel : IN unsigned(2 DOWNTO 0);
             saida : OUT unsigned(15 DOWNTO 0)
         );
     END COMPONENT;
@@ -59,6 +69,7 @@ ARCHITECTURE a_ula OF ula IS
     SIGNAL menor_operac_1 : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL soma_operac_2 : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL subtr_operac_3 : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL mov_operac_4 : unsigned(15 DOWNTO 0) := "0000000000000000";
 
 BEGIN
 
@@ -86,11 +97,18 @@ BEGIN
         subtr_out => subtr_operac_3
     );
 
+    mov1 : mov PORT MAP(
+        x => entrada_0,
+        y => entrada_1,
+        mov_out => mov_operac_4
+    );
+
     mux16bits1 : mux16bits PORT MAP(
         entr0 => maior_operac_0,
         entr1 => menor_operac_1,
         entr2 => soma_operac_2,
         entr3 => subtr_operac_3,
+        entr4 => mov_operac_4,
         sel => seletor_op,
         saida => saida_ula
     );

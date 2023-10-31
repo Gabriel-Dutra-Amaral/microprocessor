@@ -43,7 +43,7 @@ ARCHITECTURE a_processador OF processador IS
             salvar_resultado : OUT STD_LOGIC;
             salva_registrador : OUT unsigned(2 DOWNTO 0);
             valor_imediato_op : OUT unsigned(15 DOWNTO 0);
-            seletor_ula : OUT unsigned(1 DOWNTO 0);
+            seletor_ula : OUT unsigned(2 DOWNTO 0);
             imediato_op : OUT STD_LOGIC
         );
     END COMPONENT;
@@ -66,19 +66,19 @@ ARCHITECTURE a_processador OF processador IS
         PORT (
             entrada_0 : IN unsigned(15 DOWNTO 0);
             entrada_1 : IN unsigned(15 DOWNTO 0);
-            seletor_op : IN unsigned(1 DOWNTO 0);
+            seletor_op : IN unsigned(2 DOWNTO 0);
             saida_ula : OUT unsigned(15 DOWNTO 0)
         );
     END COMPONENT;
 
-    -- Salto incondicional
+    -- Salto incondicional --
     SIGNAL wr_en_pc_uc : STD_LOGIC := '0';
     SIGNAL saida_rom : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL ctrl_salto : STD_LOGIC := '0';
     SIGNAL valor_jump : unsigned(9 DOWNTO 0) := "0000000000";
     SIGNAL saida_pc : unsigned(9 DOWNTO 0) := "0000000000";
 
-    -- Banco de Registradores
+    -- Banco de Registradores --
     SIGNAL entrada_reg1 : unsigned(2 DOWNTO 0) := "000";
     SIGNAL entrada_reg2 : unsigned(2 DOWNTO 0) := "000";
     SIGNAL saida_reg1 : unsigned(15 DOWNTO 0) := "0000000000000000";
@@ -86,11 +86,11 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL codigo_registrador : unsigned(2 DOWNTO 0) := "000";
     SIGNAL escreve_registrador : STD_LOGIC := '0';
 
-    -- Unidade de Controle
+    -- Unidade de Controle --
     SIGNAL valor_imediato_op : unsigned(15 DOWNTO 0) := "0000000000000000";
 
-    -- ULA
-    SIGNAL seleciona_op_ula : unsigned(1 DOWNTO 0) := "00";
+    -- ULA --
+    SIGNAL seleciona_op_ula : unsigned(2 DOWNTO 0) := "000";
     SIGNAL saida_ula : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL mux_reg_imm : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL eh_imediato : STD_LOGIC := '0';
