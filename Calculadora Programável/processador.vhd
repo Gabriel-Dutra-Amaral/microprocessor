@@ -44,8 +44,7 @@ ARCHITECTURE a_processador OF processador IS
             register_code : OUT unsigned(2 DOWNTO 0);
             valor_imediato_op : OUT unsigned(15 DOWNTO 0);
             seletor_ula : OUT unsigned(2 DOWNTO 0);
-            imediato_op : OUT STD_LOGIC;
-            sel_mov_reg_imm : OUT STD_LOGIC
+            imediato_op : OUT STD_LOGIC
         );
     END COMPONENT;
 
@@ -127,8 +126,7 @@ BEGIN
         register_code => codigo_registrador,
         valor_imediato_op => valor_imediato_op,
         seletor_ula => seleciona_op_ula,
-        imediato_op => eh_imediato,
-        sel_mov_reg_imm => sel_mov_reg_imm
+        imediato_op => eh_imediato
     );
 
     banco_0 : banco_de_registradores PORT MAP(
@@ -150,7 +148,7 @@ BEGIN
         saida_ula => saida_ula
     );
 
-    mux_reg_imm <= saida_reg2 WHEN sel_mov_reg_imm = '0' ELSE
+    mux_reg_imm <= saida_reg2 WHEN eh_imediato = '0' ELSE
         valor_imediato_op;
 
 END ARCHITECTURE a_processador;

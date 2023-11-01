@@ -19,8 +19,7 @@ ENTITY un_ctrl IS
 
         valor_imediato_op : OUT unsigned(15 DOWNTO 0);
         seletor_ula : OUT unsigned(2 DOWNTO 0);
-        imediato_op : OUT STD_LOGIC;
-        sel_mov_reg_imm : OUT STD_LOGIC
+        imediato_op : OUT STD_LOGIC
     );
 END ENTITY;
 
@@ -72,12 +71,12 @@ BEGIN
         "0000000000";
 
     -- MOV reg/imediato --
-    reg1 <= registrador_dst WHEN (opcode = "1000" AND estado_maq = "10") ELSE
-        "000";
-    reg2 <= registrador_src WHEN (opcode = "1000" AND estado_maq = "10") ELSE
-        "000";
-    sel_mov_reg_imm <= leitura_de_instrucao(11) WHEN (opcode = "1000" AND estado_maq = "10");
-
+    reg1 <= registrador_dst WHEN (opcode = "1000" AND estado_maq = "10");
+    reg2 <= registrador_src WHEN (opcode = "1000" AND estado_maq = "10");
+    imediato_op <= leitura_de_instrucao(11) WHEN (opcode = "1000" AND estado_maq = "10");
+    valor_imediato_op <= imm_op WHEN (opcode = "1000" AND estado_maq = "10");
     seletor_ula <= "100" WHEN (opcode = "1000" AND estado_maq = "10");
+    wr_result_en <= '1' WHEN (opcode = "1000" AND estado_maq = "10");
+    register_code <= registrador_dst WHEN (opcode = "1000" AND estado_maq = "10");
 
 END ARCHITECTURE;
