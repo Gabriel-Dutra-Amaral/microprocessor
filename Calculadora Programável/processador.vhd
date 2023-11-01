@@ -36,12 +36,11 @@ ARCHITECTURE a_processador OF processador IS
             clk : IN STD_LOGIC;
             rst : IN STD_LOGIC;
             wr_en_pc : OUT STD_LOGIC;
+            write_reg : OUT STD_LOGIC;
             seletor_jump : OUT STD_LOGIC;
             saida_jump : OUT unsigned(9 DOWNTO 0);
             reg1 : OUT unsigned(2 DOWNTO 0);
             reg2 : OUT unsigned(2 DOWNTO 0);
-            salvar_resultado : OUT STD_LOGIC;
-            salva_registrador : OUT unsigned(2 DOWNTO 0);
             valor_imediato_op : OUT unsigned(15 DOWNTO 0);
             seletor_ula : OUT unsigned(1 DOWNTO 0);
             imediato_op : OUT STD_LOGIC
@@ -53,7 +52,7 @@ ARCHITECTURE a_processador OF processador IS
             seleciona_registrador_1 : IN unsigned(2 DOWNTO 0);
             seleciona_registrador_2 : IN unsigned(2 DOWNTO 0);
             codigo_registrador : IN unsigned(2 DOWNTO 0);
-            escreve_registrador : IN STD_LOGIC;
+            escreve_registrador: IN STD_LOGIC;
             clk : IN STD_LOGIC;
             rst : IN STD_LOGIC;
             saida_registrador_1 : OUT unsigned(15 DOWNTO 0);
@@ -81,10 +80,9 @@ ARCHITECTURE a_processador OF processador IS
     -- Banco de Registradores
     SIGNAL entrada_reg1 : unsigned(2 DOWNTO 0) := "000";
     SIGNAL entrada_reg2 : unsigned(2 DOWNTO 0) := "000";
+    SIGNAL mux_reg : unsigned(2 DOWNTO 0) := "000";
     SIGNAL saida_reg1 : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL saida_reg2 : unsigned(15 DOWNTO 0) := "0000000000000000";
-    SIGNAL codigo_registrador : unsigned(2 DOWNTO 0) := "000";
-    SIGNAL escreve_registrador : STD_LOGIC := '0';
 
     -- Unidade de Controle
     SIGNAL valor_imediato_op : unsigned(15 DOWNTO 0) := "0000000000000000";
@@ -92,8 +90,8 @@ ARCHITECTURE a_processador OF processador IS
     -- ULA
     SIGNAL seleciona_op_ula : unsigned(1 DOWNTO 0) := "00";
     SIGNAL saida_ula : unsigned(15 DOWNTO 0) := "0000000000000000";
-    SIGNAL mux_reg_imm : unsigned(15 DOWNTO 0) := "0000000000000000";
-    SIGNAL eh_imediato : STD_LOGIC := '0';
+    SIGNAL mux_reg_imm, mux_ula_imm : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL eh_imediato, write_reg_o : STD_LOGIC := '0';
 
 BEGIN
 
@@ -116,13 +114,12 @@ BEGIN
         leitura_de_instrucao => saida_rom,
         clk => clk,
         rst => rst,
+        write_reg => write_reg_o,
         wr_en_pc => wr_en_pc_uc,
         seletor_jump => ctrl_salto,
         saida_jump => valor_jump,
         reg1 => entrada_reg1,
         reg2 => entrada_reg2,
-        salvar_resultado => escreve_registrador,
-        salva_registrador => codigo_registrador,
         valor_imediato_op => valor_imediato_op,
         seletor_ula => seleciona_op_ula,
         imediato_op => eh_imediato
@@ -131,13 +128,13 @@ BEGIN
     banco_0 : banco_de_registradores PORT MAP(
         seleciona_registrador_1 => entrada_reg1,
         seleciona_registrador_2 => entrada_reg2,
-        codigo_registrador => codigo_registrador,
-        escreve_registrador => escreve_registrador,
+        codigo_registrador => entrada_reg1,
+        escreve_registrador => write_reg_o,
         clk => clk,
         rst => rst,
         saida_registrador_1 => saida_reg1,
         saida_registrador_2 => saida_reg2,
-        dado_registrador => saida_ula
+        dado_registrador => mux_ula_imm
     );
 
     ula_0 : ula PORT MAP(
@@ -150,4 +147,8 @@ BEGIN
     mux_reg_imm <= saida_reg2 WHEN eh_imediato = '0' ELSE
         valor_imediato_op;
 
+    mux_ula_imm <= saida_ula WHEN eh_imediato = '1' else
+        valor_imediato_op;
+    
 END ARCHITECTURE a_processador;
+
