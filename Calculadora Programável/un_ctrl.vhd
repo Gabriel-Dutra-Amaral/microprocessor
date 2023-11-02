@@ -51,32 +51,50 @@ BEGIN
         estado => estado_maq
     );
 
-    -- Decode --
-    opcode <= leitura_de_instrucao(15 DOWNTO 12) WHEN estado_maq = "01";
-
-    registrador_src <= leitura_de_instrucao(2 DOWNTO 0) WHEN estado_maq = "01";
-
-    registrador_dst <= leitura_de_instrucao(5 DOWNTO 3) WHEN estado_maq = "01";
-
-    imm_op <= "0000000000" & leitura_de_instrucao(10 DOWNTO 5) WHEN estado_maq = "01";
-
-    -- Execute --
-    wr_en_pc <= '1' WHEN estado_maq = "10" ELSE
-        '0';
-
-    -- Salto Incondicional --
-    seletor_jump <= '1' WHEN (opcode = "0001" AND estado_maq = "10") ELSE
-        '0';
-    saida_jump <= (leitura_de_instrucao(9 DOWNTO 0) - 1) WHEN (opcode = "0001" AND estado_maq = "10") ELSE
-        "0000000000";
-
-    -- MOV reg/imediato --
-    reg1 <= registrador_dst WHEN (opcode = "1000" AND estado_maq = "10");
-    reg2 <= registrador_src WHEN (opcode = "1000" AND estado_maq = "10");
-    imediato_op <= leitura_de_instrucao(11) WHEN (opcode = "1000" AND estado_maq = "10");
-    valor_imediato_op <= imm_op WHEN (opcode = "1000" AND estado_maq = "10");
-    seletor_ula <= "100" WHEN (opcode = "1000" AND estado_maq = "10");
-    wr_result_en <= '1' WHEN (opcode = "1000" AND estado_maq = "10");
-    register_code <= registrador_dst WHEN (opcode = "1000" AND estado_maq = "10");
+    PROCESS (estado_maq, opcode)
+    BEGIN
+        CASE estado_maq IS
+            WHEN "00" =>
+                wr_en_pc <= '0';
+                wr_result_en <= '0';
+                seletor_jump <= '0';
+                entrada_uc <= leitura_de_instrucao;
+            WHEN "01" =>
+                opcode <= entrada_uc(15 DOWNTO 12);
+                registrador_src <= entrada_uc(2 DOWNTO 0);
+                registrador_dst <= entrada_uc(5 DOWNTO 3);
+                imm_op <= "00000000000" & entrada_uc(10 DOWNTO 6);
+            WHEN "10" =>
+                wr_en_pc <= '1';
+                CASE opcode IS
+                    WHEN "0001" =>
+                        seletor_jump <= '1';
+                        saida_jump <= (entrada_uc(9 DOWNTO 0) - 1);
+                    WHEN "1000" =>
+                        reg1 <= registrador_dst;
+                        reg2 <= registrador_src;
+                        imediato_op <= entrada_uc(11);
+                        valor_imediato_op <= imm_op;
+                        seletor_ula <= "100";
+                        wr_result_en <= '1';
+                        register_code <= registrador_dst;
+                    WHEN "0010" =>
+                        reg1 <= registrador_dst;
+                        reg2 <= registrador_src;
+                        imediato_op <= entrada_uc(11);
+                        valor_imediato_op <= imm_op;
+                        seletor_ula <= "010";
+                        wr_result_en <= '1';
+                        register_code <= registrador_dst;
+                    WHEN OTHERS =>
+                        imediato_op <= '0';
+                        valor_imediato_op <= "0000000000000000";
+                        seletor_ula <= "000";
+                        wr_result_en <= '0';
+                        register_code <= "000";
+                END CASE;
+            WHEN OTHERS =>
+        END CASE;
+    END PROCESS;
 
 END ARCHITECTURE;
