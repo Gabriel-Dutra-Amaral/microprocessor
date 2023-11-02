@@ -1,0 +1,30 @@
+[*]
+[*] GTKWave Analyzer v3.3.114 (w)1999-2023 BSI
+[*] Sun Oct 22 17:48:51 2023
+[*]
+[dumpfile] "/home/gabriel/Documents/2023.2/AOC/microprocessor/Unidade de Controle/PC e ROM/pc_rom_tb.ghw"
+[dumpfile_mtime] "Sun Oct 22 17:47:25 2023"
+[dumpfile_size] 2973
+[savefile] "/home/gabriel/Documents/2023.2/AOC/microprocessor/Unidade de Controle/PC e ROM/pc_rom_dados.gtkw"
+[timestart] 0
+[size] 1308 694
+[pos] -51 -1
+*-26.575872 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.pc_rom_tb.
+[sst_width] 278
+[signals_width] 198
+[sst_expanded] 1
+[sst_vpaned_height] 190
+@22
+#{top.pc_rom_tb.endereco_entrada[6:0]} top.pc_rom_tb.endereco_entrada[6] top.pc_rom_tb.endereco_entrada[5] top.pc_rom_tb.endereco_entrada[4] top.pc_rom_tb.endereco_entrada[3] top.pc_rom_tb.endereco_entrada[2] top.pc_rom_tb.endereco_entrada[1] top.pc_rom_tb.endereco_entrada[0]
+#{top.pc_rom_tb.rom_out[15:0]} top.pc_rom_tb.rom_out[15] top.pc_rom_tb.rom_out[14] top.pc_rom_tb.rom_out[13] top.pc_rom_tb.rom_out[12] top.pc_rom_tb.rom_out[11] top.pc_rom_tb.rom_out[10] top.pc_rom_tb.rom_out[9] top.pc_rom_tb.rom_out[8] top.pc_rom_tb.rom_out[7] top.pc_rom_tb.rom_out[6] top.pc_rom_tb.rom_out[5] top.pc_rom_tb.rom_out[4] top.pc_rom_tb.rom_out[3] top.pc_rom_tb.rom_out[2] top.pc_rom_tb.rom_out[1] top.pc_rom_tb.rom_out[0]
+@28
+top.pc_rom_tb.clk
+top.pc_rom_tb.wr_en
+top.pc_rom_tb.seletor_jump
+top.pc_rom_tb.finished
+@29
+top.pc_rom_tb.rst
+[pattern_trace] 1
+[pattern_trace] 0

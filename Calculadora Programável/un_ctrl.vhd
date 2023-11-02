@@ -19,7 +19,9 @@ ENTITY un_ctrl IS
 
         valor_imediato_op : OUT unsigned(15 DOWNTO 0);
         seletor_ula : OUT unsigned(2 DOWNTO 0);
-        imediato_op : OUT STD_LOGIC
+        imediato_op : OUT STD_LOGIC;
+
+        saida_estado : OUT unsigned(1 downto 0)
     );
 END ENTITY;
 
@@ -68,9 +70,18 @@ BEGIN
                 wr_en_pc <= '1';
                 CASE opcode IS
                     WHEN "0001" =>
+                        -- Salto Incondicional --
+                        -- B"0001_00_EEEEEEEEEE"
+                        -- E: endereço (10-bits)
                         seletor_jump <= '1';
                         saida_jump <= (entrada_uc(9 DOWNTO 0) - 1);
                     WHEN "1000" =>
+                        -- MOV reg/imediato --
+                        -- B"1000_I_CCCCC_ddd_sss"
+                        -- I: 0 se registrador, 1 se imediato (1-bit)
+                        -- C: conteúdo (dado de 6-bits)
+                        -- d: registrador destino (3-bits)
+                        -- s: registrador fonte (3-bits)
                         reg1 <= registrador_dst;
                         reg2 <= registrador_src;
                         imediato_op <= entrada_uc(11);
@@ -79,6 +90,13 @@ BEGIN
                         wr_result_en <= '1';
                         register_code <= registrador_dst;
                     WHEN "0010" =>
+                        -- ADD reg/imediato --
+                        -- B"0010_I_CCCCC_ddd_sss"
+                        -- I: 0 se registrador, 1 se imediato (1-bit)
+                        -- C: conteúdo (dado de 6-bits)
+                        -- d: registrador destino (3-bits)
+                        -- s: registrador fonte (3-bits)
+                        -- ddd+sss OU ddd+imm
                         reg1 <= registrador_dst;
                         reg2 <= registrador_src;
                         imediato_op <= entrada_uc(11);
@@ -86,7 +104,22 @@ BEGIN
                         seletor_ula <= "010";
                         wr_result_en <= '1';
                         register_code <= registrador_dst;
-                    WHEN OTHERS =>
+                    WHEN "0100" =>
+                        -- SUB reg/imediato --
+                        -- B"0100_I_CCCCCC_ddd_sss"
+                        -- I: 0 se registrador, 1 se imediato (1-bit)
+                        -- C: conteúdo (dado de 6-bits)
+                        -- d: registrador destino (3-bits)
+                        -- s: registrador fonte (3-bits)
+                        -- ddd-sss OU ddd-imm
+                        reg1 <= registrador_dst;
+                        reg2 <= registrador_src;
+                        imediato_op <= entrada_uc(11);
+                        valor_imediato_op <= imm_op;
+                        seletor_ula <= "011";
+                        wr_result_en <= '1';
+                        register_code <= registrador_dst;
+                    WHEN OTHERS => -- NOP
                         imediato_op <= '0';
                         valor_imediato_op <= "0000000000000000";
                         seletor_ula <= "000";
@@ -94,7 +127,12 @@ BEGIN
                         register_code <= "000";
                 END CASE;
             WHEN OTHERS =>
+                wr_en_pc <= '0';
+                wr_result_en <= '0';
+                seletor_jump <= '0';
         END CASE;
     END PROCESS;
+
+    saida_estado <= estado_maq;
 
 END ARCHITECTURE;

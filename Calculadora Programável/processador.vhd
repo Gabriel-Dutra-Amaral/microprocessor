@@ -5,7 +5,13 @@ USE ieee.numeric_std.ALL;
 ENTITY processador IS
     PORT (
         clk : IN STD_LOGIC;
-        rst : IN STD_LOGIC
+        rst : IN STD_LOGIC;
+        estado : OUT unsigned(1 DOWNTO 0);
+        pc_saida : OUT unsigned(9 DOWNTO 0);
+        registrador_de_instr : OUT unsigned(15 DOWNTO 0);
+        saida_banco_reg1 : OUT unsigned(15 DOWNTO 0);
+        saida_banco_reg2 : OUT unsigned(15 DOWNTO 0);
+        saida_da_ula : OUT unsigned(15 DOWNTO 0)
     );
 END ENTITY;
 
@@ -44,7 +50,8 @@ ARCHITECTURE a_processador OF processador IS
             register_code : OUT unsigned(2 DOWNTO 0);
             valor_imediato_op : OUT unsigned(15 DOWNTO 0);
             seletor_ula : OUT unsigned(2 DOWNTO 0);
-            imediato_op : OUT STD_LOGIC
+            imediato_op : OUT STD_LOGIC;
+            saida_estado : OUT unsigned(1 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -89,6 +96,7 @@ ARCHITECTURE a_processador OF processador IS
     -- Unidade de Controle --
     SIGNAL valor_imediato_op : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL sel_mov_reg_imm : STD_LOGIC := '0';
+    SIGNAL valor_do_estado : unsigned(1 DOWNTO 0) := "00";
 
     -- ULA --
     SIGNAL seleciona_op_ula : unsigned(2 DOWNTO 0) := "000";
@@ -126,7 +134,8 @@ BEGIN
         register_code => codigo_registrador,
         valor_imediato_op => valor_imediato_op,
         seletor_ula => seleciona_op_ula,
-        imediato_op => eh_imediato
+        imediato_op => eh_imediato,
+        saida_estado => valor_do_estado
     );
 
     banco_0 : banco_de_registradores PORT MAP(
@@ -150,5 +159,12 @@ BEGIN
 
     mux_reg_imm <= saida_reg2 WHEN eh_imediato = '0' ELSE
         valor_imediato_op;
+
+    estado <= valor_do_estado;
+    pc_saida <= saida_pc;
+    registrador_de_instr <= saida_rom;
+    saida_banco_reg1 <= saida_reg1;
+    saida_banco_reg2 <= saida_reg2;
+    saida_da_ula <= saida_ula;
 
 END ARCHITECTURE a_processador;
