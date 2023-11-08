@@ -7,8 +7,9 @@ ENTITY ula IS
         entrada_0 : IN unsigned(15 DOWNTO 0);
         entrada_1 : IN unsigned(15 DOWNTO 0);
         seletor_op : IN unsigned(2 DOWNTO 0);
+
         saida_ula : OUT unsigned(15 DOWNTO 0);
-        flag_Carry : OUT std_logic
+        out_flag_carry : OUT std_logic
     );
 END ENTITY;
 
@@ -85,7 +86,7 @@ BEGIN
         x => entrada_0,
         y => entrada_1,
         menor_out => menor_operac_1,
-        flag_C => flag_Carry
+        flag_C => out_flag_carry
     );
 
     soma1 : soma PORT MAP(

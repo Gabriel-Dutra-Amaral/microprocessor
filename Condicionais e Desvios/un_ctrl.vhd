@@ -9,8 +9,11 @@ ENTITY un_ctrl IS
         rst : IN STD_LOGIC;
 
         wr_en_pc : OUT STD_LOGIC;
-        seletor_jump : OUT STD_LOGIC;
-        saida_jump : OUT unsigned(9 DOWNTO 0);
+        seletor_jump : OUT STD_LOGIC; -- Incond
+        saida_jump : OUT unsigned(9 DOWNTO 0); -- Incond
+
+        saida_jrult : OUT unsigned(9 DOWNTO 0); -- Cond BLT
+        seletor_jrult : OUT STD_LOGIC; -- Cond BLT
 
         reg1 : OUT unsigned(2 DOWNTO 0);
         reg2 : OUT unsigned(2 DOWNTO 0);
@@ -21,9 +24,9 @@ ENTITY un_ctrl IS
         seletor_ula : OUT unsigned(2 DOWNTO 0);
         imediato_op : OUT STD_LOGIC;
 
-        flag_Carry_o : OUT std_logic;
+        flag_Carry_o : IN STD_LOGIC;
 
-        saida_estado : OUT unsigned(1 downto 0)
+        saida_estado : OUT unsigned(1 DOWNTO 0)
     );
 END ENTITY;
 
@@ -134,17 +137,21 @@ BEGIN
                         imediato_op <= entrada_uc(11);
                         valor_imediato_op <= imm_op;
                     WHEN "1001" =>
-                        -- JRULT reg_ddd, reg_sss/imm, dst
-                        -- B"1001_I_CCCCC_ddd_sss"
-                        -- I: 0 se registrador, 1 se imediato (1-bit)
-                        -- C: conteúdo (dado de 6-bits)
-                        -- d: registrador_1 (3-bits)
-                        -- s: registrador_2 (3-bits)
-                        seletor_ula <= "001"; -- operação menor
-                        reg1 <= registrador_dst;
-                        reg2 <= registrador_src;
-                        imediato_op <= entrada_uc(11);
-                        valor_imediato_op <= imm_op;
+                        -- JRULT -> PC = PC + X;
+                        -- B"1001_YY_XXXXXXXXXX"
+                        -- Y: não importa
+                        -- X: endereco do branch
+                        CASE flag_Carry_o IS
+                            WHEN '0' =>
+                                seletor_jrult <= '0';
+                                saida_jrult <= "0000000000";
+                            WHEN '1' =>
+                                seletor_jrult <= '1';
+                                saida_jrult <= entrada_uc(9 DOWNTO 0);
+                            WHEN OTHERS =>
+                                seletor_jrult <= '0';
+                                saida_jrult <= "0000000000";
+                        END CASE;
                     WHEN OTHERS => -- NOP
                         imediato_op <= '0';
                         valor_imediato_op <= "0000000000000000";

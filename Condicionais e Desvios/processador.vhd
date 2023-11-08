@@ -12,7 +12,7 @@ ENTITY processador IS
         saida_banco_reg1 : OUT unsigned(15 DOWNTO 0);
         saida_banco_reg2 : OUT unsigned(15 DOWNTO 0);
         saida_da_ula : OUT unsigned(15 DOWNTO 0)
-        
+
     );
 END ENTITY;
 
@@ -42,9 +42,14 @@ ARCHITECTURE a_processador OF processador IS
             leitura_de_instrucao : IN unsigned(15 DOWNTO 0);
             clk : IN STD_LOGIC;
             rst : IN STD_LOGIC;
+
             wr_en_pc : OUT STD_LOGIC;
             seletor_jump : OUT STD_LOGIC;
             saida_jump : OUT unsigned(9 DOWNTO 0);
+
+            saida_jrult : OUT unsigned(9 DOWNTO 0); -- Cond BLT
+            seletor_jrult : OUT STD_LOGIC; -- Cond BLT
+
             reg1 : OUT unsigned(2 DOWNTO 0);
             reg2 : OUT unsigned(2 DOWNTO 0);
             wr_result_en : OUT STD_LOGIC;
@@ -53,7 +58,7 @@ ARCHITECTURE a_processador OF processador IS
             seletor_ula : OUT unsigned(2 DOWNTO 0);
             imediato_op : OUT STD_LOGIC;
             saida_estado : OUT unsigned(1 DOWNTO 0);
-            flag_Carry_o : OUT std_logic
+            flag_Carry_o : IN STD_LOGIC
         );
     END COMPONENT;
 
@@ -77,7 +82,7 @@ ARCHITECTURE a_processador OF processador IS
             entrada_1 : IN unsigned(15 DOWNTO 0);
             seletor_op : IN unsigned(2 DOWNTO 0);
             saida_ula : OUT unsigned(15 DOWNTO 0);
-            flag_Carry : OUT std_logic
+            out_flag_Carry : OUT STD_LOGIC
         );
     END COMPONENT;
 
@@ -86,6 +91,8 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL saida_rom : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL ctrl_salto : STD_LOGIC := '0';
     SIGNAL valor_jump : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL ctrl_jrult : STD_LOGIC := '0';
+    SIGNAL valor_jrult : unsigned(9 DOWNTO 0) := "0000000000";
     SIGNAL saida_pc : unsigned(9 DOWNTO 0) := "0000000000";
 
     -- Banco de Registradores --
@@ -132,6 +139,8 @@ BEGIN
         wr_en_pc => wr_en_pc_uc,
         seletor_jump => ctrl_salto,
         saida_jump => valor_jump,
+        saida_jrult => valor_jrult,
+        seletor_jrult => ctrl_jrult,
         reg1 => entrada_reg1,
         reg2 => entrada_reg2,
         wr_result_en => escreve_registrador,
@@ -160,13 +169,11 @@ BEGIN
         entrada_1 => mux_reg_imm,
         seletor_op => seleciona_op_ula,
         saida_ula => saida_ula,
-        flag_Carry => flag_C_s
+        out_flag_carry => flag_C_s
     );
 
     mux_reg_imm <= saida_reg2 WHEN eh_imediato = '0' ELSE
         valor_imediato_op;
-
-    
 
     estado <= valor_do_estado;
     pc_saida <= saida_pc;
