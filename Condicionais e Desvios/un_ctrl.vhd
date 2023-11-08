@@ -123,17 +123,28 @@ BEGIN
                         register_code <= registrador_dst;
                     WHEN "0110" =>
                         -- CP reg/imediato
-                        --B"0110_I_CCCCC_ddd_sss"
-                        --I: 0 se registrador, 1 se imediato (1-bit)
-                        --C: conteúdo (dado de 6-bits)
-                        --d: registrador destino (3-bits)
-                        --s: registrador fonte (3-bits)
+                        -- B"0110_I_CCCCC_ddd_sss"
+                        -- I: 0 se registrador, 1 se imediato (1-bit)
+                        -- C: conteúdo (dado de 6-bits)
+                        -- d: registrador_1 (3-bits)
+                        -- s: registrador_2 (3-bits)
                         seletor_ula <= "001"; -- operação menor
                         reg1 <= registrador_dst;
                         reg2 <= registrador_src;
                         imediato_op <= entrada_uc(11);
                         valor_imediato_op <= imm_op;
-                        
+                    WHEN "1001" =>
+                        -- JRULT reg_ddd, reg_sss/imm, dst
+                        -- B"1001_I_CCCCC_ddd_sss"
+                        -- I: 0 se registrador, 1 se imediato (1-bit)
+                        -- C: conteúdo (dado de 6-bits)
+                        -- d: registrador_1 (3-bits)
+                        -- s: registrador_2 (3-bits)
+                        seletor_ula <= "001"; -- operação menor
+                        reg1 <= registrador_dst;
+                        reg2 <= registrador_src;
+                        imediato_op <= entrada_uc(11);
+                        valor_imediato_op <= imm_op;
                     WHEN OTHERS => -- NOP
                         imediato_op <= '0';
                         valor_imediato_op <= "0000000000000000";
