@@ -29,6 +29,23 @@ ARCHITECTURE a_processador OF processador IS
         );
     END COMPONENT;
 
+    COMPONENT pc IS
+        PORT (
+            clk : IN STD_LOGIC;
+            rst : IN STD_LOGIC;
+            wr_en : IN STD_LOGIC;
+            endereco_entrada_pc : IN unsigned(9 DOWNTO 0);
+            endereco_saida_pc : OUT unsigned(9 DOWNTO 0)
+        );
+    END COMPONENT;
+
+    COMPONENT somador IS
+        PORT (
+            entrada_somador : IN unsigned(9 DOWNTO 0);
+            saida_somador : OUT unsigned(9 DOWNTO 0)
+        );
+    END COMPONENT;
+
     COMPONENT rom IS
         PORT (
             clk : IN STD_LOGIC;
@@ -124,6 +141,19 @@ BEGIN
         controle_de_salto => ctrl_salto,
         entrada_pc_forward => valor_jump,
         saida_pc_forward => saida_pc
+    );
+
+    pc_0 : pc PORT MAP(
+        clk => clk,
+        rst => rst,
+        wr_en => wr_en_pc_uc,
+        endereco_entrada_pc =>,
+        endereco_saida_pc =>
+    );
+
+    somador_0 : pc PORT MAP(
+        entrada_somador =>,
+        saida_somador =>
     );
 
     rom_0 : rom PORT MAP(

@@ -147,7 +147,7 @@ BEGIN
                                 saida_jrult <= "0000000000";
                             WHEN '1' =>
                                 seletor_jrult <= '1';
-                                saida_jrult <= entrada_uc(9 DOWNTO 0);
+                                saida_jrult <= (entrada_uc(9 DOWNTO 0)-1);
                             WHEN OTHERS =>
                                 seletor_jrult <= '0';
                                 saida_jrult <= "0000000000";
