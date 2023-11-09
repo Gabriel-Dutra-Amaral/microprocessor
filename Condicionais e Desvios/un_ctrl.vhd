@@ -14,6 +14,7 @@ ENTITY un_ctrl IS
 
         saida_jrult : OUT unsigned(9 DOWNTO 0); -- Cond BLT
         seletor_jrult : OUT STD_LOGIC; -- Cond BLT
+        soma_ou_sub_jrult : OUT STD_LOGIC; -- Cond BLT
 
         reg1 : OUT unsigned(2 DOWNTO 0);
         reg2 : OUT unsigned(2 DOWNTO 0);
@@ -80,6 +81,8 @@ BEGIN
                         -- E: endereço (10-bits)
                         seletor_jump <= '1';
                         saida_jump <= (entrada_uc(9 DOWNTO 0) - 1);
+                        seletor_jrult <= '0';
+                        saida_jrult <= "0000000000";
                     WHEN "1000" =>
                         -- MOV reg/imediato --
                         -- B"1000_I_CCCCC_ddd_sss"
@@ -94,6 +97,8 @@ BEGIN
                         seletor_ula <= "100";
                         wr_result_en <= '1';
                         register_code <= registrador_dst;
+                        seletor_jrult <= '0';
+                        saida_jrult <= "0000000000";
                     WHEN "0010" =>
                         -- ADD reg/imediato --
                         -- B"0010_I_CCCCC_ddd_sss"
@@ -109,6 +114,8 @@ BEGIN
                         seletor_ula <= "010";
                         wr_result_en <= '1';
                         register_code <= registrador_dst;
+                        seletor_jrult <= '0';
+                        saida_jrult <= "0000000000";
                     WHEN "0100" =>
                         -- SUB reg/imediato --
                         -- B"0100_I_CCCCCC_ddd_sss"
@@ -124,6 +131,8 @@ BEGIN
                         seletor_ula <= "011";
                         wr_result_en <= '1';
                         register_code <= registrador_dst;
+                        seletor_jrult <= '0';
+                        saida_jrult <= "0000000000";
                     WHEN "0110" =>
                         -- CP reg/imediato
                         -- B"0110_I_CCCCC_ddd_sss"
@@ -136,21 +145,27 @@ BEGIN
                         reg2 <= registrador_src;
                         imediato_op <= entrada_uc(11);
                         valor_imediato_op <= imm_op;
+                        seletor_jrult <= '0';
+                        saida_jrult <= "0000000000";
                     WHEN "1001" =>
                         -- JRULT -> PC = PC + X;
-                        -- B"1001_YY_XXXXXXXXXX"
+                        -- B"1001_S_Y_XXXXXXXXXX"
                         -- Y: não importa
                         -- X: endereco do branch
+                        -- S: 0 para soma 1 para subtracao do imediato
                         CASE flag_Carry_o IS
                             WHEN '0' =>
                                 seletor_jrult <= '0';
                                 saida_jrult <= "0000000000";
+                                soma_ou_sub_jrult <= '0';
                             WHEN '1' =>
                                 seletor_jrult <= '1';
-                                saida_jrult <= (entrada_uc(9 DOWNTO 0)-1);
+                                saida_jrult <= (entrada_uc(9 DOWNTO 0));
+                                soma_ou_sub_jrult <= entrada_uc(11);
                             WHEN OTHERS =>
                                 seletor_jrult <= '0';
                                 saida_jrult <= "0000000000";
+                                soma_ou_sub_jrult <= '0';
                         END CASE;
                     WHEN OTHERS => -- NOP
                         imediato_op <= '0';
@@ -158,11 +173,15 @@ BEGIN
                         seletor_ula <= "000";
                         wr_result_en <= '0';
                         register_code <= "000";
+                        seletor_jrult <= '0';
+                        saida_jrult <= "0000000000";
                 END CASE;
             WHEN OTHERS =>
                 wr_en_pc <= '0';
                 wr_result_en <= '0';
                 seletor_jump <= '0';
+                seletor_jrult <= '0';
+                saida_jrult <= "0000000000";
         END CASE;
     END PROCESS;
 

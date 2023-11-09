@@ -18,17 +18,6 @@ END ENTITY;
 
 ARCHITECTURE a_processador OF processador IS
 
-    COMPONENT pc_forward IS
-        PORT (
-            clk : IN STD_LOGIC;
-            rst : IN STD_LOGIC;
-            wr_en : IN STD_LOGIC;
-            controle_de_salto : IN STD_LOGIC;
-            entrada_pc_forward : IN unsigned(9 DOWNTO 0);
-            saida_pc_forward : OUT unsigned(9 DOWNTO 0)
-        );
-    END COMPONENT;
-
     COMPONENT pc IS
         PORT (
             clk : IN STD_LOGIC;
@@ -66,6 +55,7 @@ ARCHITECTURE a_processador OF processador IS
 
             saida_jrult : OUT unsigned(9 DOWNTO 0); -- Cond BLT
             seletor_jrult : OUT STD_LOGIC; -- Cond BLT
+            soma_ou_sub_jrult : OUT STD_LOGIC; -- Cond BLT
 
             reg1 : OUT unsigned(2 DOWNTO 0);
             reg2 : OUT unsigned(2 DOWNTO 0);
@@ -132,33 +122,38 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL eh_imediato : STD_LOGIC := '0';
     SIGNAL flag_C_s : STD_LOGIC := '0';
 
-BEGIN
+    -- Program Counter --
+    SIGNAL mux_2x1x1_entrada_pc : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL saida_somador : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL saida_endereco_pc : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL demux_1x1x2 : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL soma_ou_sub_jrult : STD_LOGIC := '0';
 
-    pc_0 : pc_forward PORT MAP(
-        clk => clk,
-        rst => rst,
-        wr_en => wr_en_pc_uc,
-        controle_de_salto => ctrl_salto,
-        entrada_pc_forward => valor_jump,
-        saida_pc_forward => saida_pc
-    );
+BEGIN
 
     pc_0 : pc PORT MAP(
         clk => clk,
         rst => rst,
         wr_en => wr_en_pc_uc,
-        endereco_entrada_pc =>,
-        endereco_saida_pc =>
+        endereco_entrada_pc => mux_2x1x1_entrada_pc,
+        endereco_saida_pc => saida_endereco_pc
     );
 
-    somador_0 : pc PORT MAP(
-        entrada_somador =>,
-        saida_somador =>
+    demux_1x1x2 <= (saida_endereco_pc + valor_jrult) WHEN (ctrl_jrult = '1' AND soma_ou_sub_jrult = '0') ELSE
+        (saida_endereco_pc - valor_jrult) WHEN (ctrl_jrult = '1' AND soma_ou_sub_jrult = '1') ELSE
+        saida_endereco_pc;
+
+    somador_0 : somador PORT MAP(
+        entrada_somador => demux_1x1x2,
+        saida_somador => saida_somador
     );
+
+    mux_2x1x1_entrada_pc <= valor_jump WHEN ctrl_salto = '1' ELSE
+        saida_somador;
 
     rom_0 : rom PORT MAP(
         clk => clk,
-        entrada_rom => saida_pc,
+        entrada_rom => saida_somador,
         saida_rom_dado => saida_rom
     );
 
@@ -171,6 +166,7 @@ BEGIN
         saida_jump => valor_jump,
         saida_jrult => valor_jrult,
         seletor_jrult => ctrl_jrult,
+        soma_ou_sub_jrult => soma_ou_sub_jrult,
         reg1 => entrada_reg1,
         reg2 => entrada_reg2,
         wr_result_en => escreve_registrador,
@@ -194,6 +190,9 @@ BEGIN
         dado_registrador => saida_ula
     );
 
+    mux_reg_imm <= saida_reg2 WHEN eh_imediato = '0' ELSE
+        valor_imediato_op;
+
     ula_0 : ula PORT MAP(
         entrada_0 => saida_reg1,
         entrada_1 => mux_reg_imm,
@@ -202,11 +201,8 @@ BEGIN
         out_flag_carry => flag_C_s
     );
 
-    mux_reg_imm <= saida_reg2 WHEN eh_imediato = '0' ELSE
-        valor_imediato_op;
-
     estado <= valor_do_estado;
-    pc_saida <= saida_pc;
+    pc_saida <= saida_somador;
     registrador_de_instr <= saida_rom;
     saida_banco_reg1 <= saida_reg1;
     saida_banco_reg2 <= saida_reg2;
