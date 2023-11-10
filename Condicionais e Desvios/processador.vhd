@@ -28,6 +28,13 @@ ARCHITECTURE a_processador OF processador IS
         );
     END COMPONENT;
 
+    COMPONENT converte IS
+        PORT (
+            num_complemento_dois : IN unsigned(9 DOWNTO 0);
+            num_normal : OUT unsigned(9 DOWNTO 0)
+        );
+    END COMPONENT;
+
     COMPONENT somador IS
         PORT (
             entrada_somador : IN unsigned(9 DOWNTO 0);
@@ -128,6 +135,9 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL saida_endereco_pc : unsigned(9 DOWNTO 0) := "0000000000";
     SIGNAL demux_1x1x2 : unsigned(9 DOWNTO 0) := "0000000000";
     SIGNAL soma_ou_sub_jrult : STD_LOGIC := '0';
+    SIGNAL num_complemento_dois : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL num_normal : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL sub : unsigned(9 DOWNTO 0) := "0000000000";
 
 BEGIN
 
@@ -139,14 +149,40 @@ BEGIN
         endereco_saida_pc => saida_endereco_pc
     );
 
-    demux_1x1x2 <= (saida_endereco_pc + valor_jrult) WHEN (ctrl_jrult = '1' AND soma_ou_sub_jrult = '0') ELSE
-        (saida_endereco_pc - valor_jrult) WHEN (ctrl_jrult = '1' AND soma_ou_sub_jrult = '1') ELSE
-        saida_endereco_pc;
+    --PROCESS (valor_do_estado,ctrl_jrult,valor_jrult)
+    --BEGIN
+    --    CASE valor_do_estado IS
+    --        WHEN "10" =>
+    --            CASE ctrl_jrult IS
+    --                WHEN '1' =>
+    --                    CASE soma_ou_sub_jrult IS
+    --                        WHEN '0' =>
+    --                            demux_1x1x2 <= saida_endereco_pc + valor_jrult;
+    --                        WHEN '1' =>
+    --                            demux_1x1x2 <= saida_endereco_pc - valor_jrult;
+    --                        WHEN OTHERS =>
+    --                    END CASE;
+    --                WHEN OTHERS =>
+    --            END CASE;
+    --        WHEN OTHERS =>
+    --    END CASE;
+    --END PROCESS;
+
+    sub <= (saida_endereco_pc - valor_jrult);
+
+    converte_0 : converte PORT MAP(
+        num_complemento_dois => sub,
+        num_normal => num_normal
+    );
 
     somador_0 : somador PORT MAP(
         entrada_somador => demux_1x1x2,
         saida_somador => saida_somador
     );
+
+    demux_1x1x2 <= (saida_endereco_pc + valor_jrult) WHEN (ctrl_jrult = '1' AND soma_ou_sub_jrult = '0') ELSE
+        num_normal WHEN (ctrl_jrult = '1' AND soma_ou_sub_jrult = '1') ELSE
+        saida_endereco_pc;
 
     mux_2x1x1_entrada_pc <= valor_jump WHEN ctrl_salto = '1' ELSE
         saida_somador;

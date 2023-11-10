@@ -2,7 +2,7 @@ all:
 
 	ghdl -a pc.vhd
 	ghdl -a somador.vhd
-	ghdl -a pc_forward.vhd
+	ghdl -a converte.vhd
 	ghdl -a rom.vhd
 	ghdl -a maquina_de_estados.vhd
 	ghdl -a un_ctrl.vhd
