@@ -5,13 +5,15 @@ USE ieee.numeric_std.ALL;
 ENTITY rom IS
     PORT (
         clk : IN STD_LOGIC;
-        entrada_rom : IN unsigned(6 DOWNTO 0); -- 2^10 = 1024
-        saida_rom_dado : OUT unsigned(15 DOWNTO 0) -- Tamanho da instrucao
+        entrada_rom : IN unsigned(6 DOWNTO 0);
+        saida_rom_dado : OUT unsigned(15 DOWNTO 0)
     );
 END ENTITY;
 
 ARCHITECTURE a_rom OF rom IS
-    TYPE mem IS ARRAY (0 TO 127) OF unsigned(15 DOWNTO 0); -- 640 Bytes na EEPROM
+
+    TYPE mem IS ARRAY (0 TO 127) OF unsigned(15 DOWNTO 0);
+    
     CONSTANT conteudo_rom : mem := (
         0 => B"0000_000000000000", -- NOP
         1 => B"1000_1_00000_111_000", -- MOV A,0
@@ -32,11 +34,14 @@ ARCHITECTURE a_rom OF rom IS
         16 => B"1000_0_00000_101_111", -- MOV R5, A
         OTHERS => (OTHERS => '0')
     );
+
 BEGIN
+
     PROCESS (clk)
     BEGIN
         IF (rising_edge(clk)) THEN
             saida_rom_dado <= conteudo_rom(to_integer(entrada_rom));
         END IF;
     END PROCESS;
+
 END ARCHITECTURE;

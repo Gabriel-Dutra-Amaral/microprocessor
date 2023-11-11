@@ -149,25 +149,6 @@ BEGIN
         endereco_saida_pc => saida_endereco_pc
     );
 
-    --PROCESS (valor_do_estado,ctrl_jrult,valor_jrult)
-    --BEGIN
-    --    CASE valor_do_estado IS
-    --        WHEN "10" =>
-    --            CASE ctrl_jrult IS
-    --                WHEN '1' =>
-    --                    CASE soma_ou_sub_jrult IS
-    --                        WHEN '0' =>
-    --                            demux_1x1x2 <= saida_endereco_pc + valor_jrult;
-    --                        WHEN '1' =>
-    --                            demux_1x1x2 <= saida_endereco_pc - valor_jrult;
-    --                        WHEN OTHERS =>
-    --                    END CASE;
-    --                WHEN OTHERS =>
-    --            END CASE;
-    --        WHEN OTHERS =>
-    --    END CASE;
-    --END PROCESS;
-
     sub <= (saida_endereco_pc - valor_jrult);
 
     converte_0 : converte PORT MAP(

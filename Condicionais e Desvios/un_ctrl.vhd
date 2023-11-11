@@ -59,6 +59,16 @@ BEGIN
         estado => estado_maq
     );
 
+    wr_en_pc <= '0' WHEN estado_maq = "00" ELSE
+        '0' WHEN estado_maq = "01" ELSE
+        '1' WHEN estado_maq = "10" ELSE
+        '0';
+
+    wr_result_en <= '0' WHEN estado_maq = "00" ELSE
+        '0' WHEN estado_maq = "01" ELSE
+        '1' WHEN (estado_maq = "10" AND opcode = "0000") ELSE
+        '0';
+
     PROCESS (estado_maq, opcode)
     BEGIN
         CASE estado_maq IS
@@ -184,7 +194,128 @@ BEGIN
                 saida_jrult <= "0000000000";
         END CASE;
     END PROCESS;
+    wr_result_en <= ;
+    seletor_jump <= ;
+    entrada_uc <= leitura_de_instrucao;
+    WHEN =>
+    opcode <= entrada_uc(15 DOWNTO 12);
+    registrador_src <= entrada_uc(2 DOWNTO 0);
+    registrador_dst <= entrada_uc(5 DOWNTO 3);
+    imm_op <= & entrada_uc(10 DOWNTO 6);
+    WHEN =>
+    wr_en_pc <= ;
+    CASE opcode IS
+        WHEN =>
+            7
+            8
+            9
+            seletor_jump <= ;
+            saida_jump <= (entrada_uc(9 DOWNTO 0) - 1);
+            seletor_jrult <= ;
+            saida_jrult <= ;
+        WHEN =>
+            10
+            11
+            12
+            13
+            14
+            15
+            reg1 <= registrador_dst;
+            reg2 <= registrador_src;
+            imediato_op <= entrada_uc(11);
+            valor_imediato_op <= imm_op;
+            seletor_ula <= ;
+            wr_result_en <= ;
+            register_code <= registrador_dst;
+            seletor_jrult <= ;
+            saida_jrult <= ;
+        WHEN =>
+            16
+            17
+            18
+            19
+            20
+            21
+            22
+            reg1 <= registrador_dst;
+            reg2 <= registrador_src;
+            imediato_op <= entrada_uc(11);
+            valor_imediato_op <= imm_op;
+            seletor_ula <= ;
+            wr_result_en <= ;
+            register_code <= registrador_dst;
+            seletor_jrult <= ;
+            saida_jrult <= ;
+        WHEN =>
+            23
+            24
+            25
+            26
+            27
+            28
+            29
+            reg1 <= registrador_dst;
+            reg2 <= registrador_src;
+            imediato_op <= entrada_uc(11);
+            valor_imediato_op <= imm_op;
+            seletor_ula <= ;
+            wr_result_en <= ;
+            register_code <= registrador_dst;
+            seletor_jrult <= ;
+            saida_jrult <= ;
+        WHEN =>
+            30
+            31
+            32
+            33
+            34
+            35
+            seletor_ula <= ;
+            36
+            reg1 <= registrador_dst;
+            reg2 <= registrador_src;
+            imediato_op <= entrada_uc(11);
+            valor_imediato_op <= imm_op;
+            seletor_jrult <= ;
+            saida_jrult <= ;
+        WHEN =>
+            37
+            38
+            39
+            40
+            41
+            CASE flag_Carry_o IS
+                WHEN =>
+                    seletor_jrult <= ;
+                    saida_jrult <= ;
+                    soma_ou_sub_jrult <= ;
+                WHEN =>
+                    seletor_jrult <= ;
+                    saida_jrult <= (entrada_uc(9 DOWNTO 0));
+                    soma_ou_sub_jrult <= entrada_uc(11);
+                WHEN OTHERS =>
+                    seletor_jrult <= ;
+                    saida_jrult <= ;
+                    soma_ou_sub_jrult <= ;
+            END CASE;
+        WHEN OTHERS => 42
+            imediato_op <= ;
+            valor_imediato_op <= ;
+            seletor_ula <= ;
+            wr_result_en <= ;
+            register_code <= ;
+            seletor_jrult <= ;
+            saida_jrult <= ;
+    END CASE;
+    WHEN OTHERS =>
+    wr_en_pc <= ;
+    wr_result_en <= ;
+    seletor_jump <= ;
+    seletor_jrult <= ;
+    saida_jrult <= ;
+END CASE;
+END PROCESS;
 
-    saida_estado <= estado_maq;
+saida_estado <= estado_maq;
 
 END ARCHITECTURE;
