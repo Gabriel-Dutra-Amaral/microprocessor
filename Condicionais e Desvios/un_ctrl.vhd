@@ -10,9 +10,9 @@ ENTITY un_ctrl IS
 
         wr_en_pc : OUT STD_LOGIC;
         seletor_jump : OUT STD_LOGIC; -- Incond
-        saida_jump : OUT unsigned(9 DOWNTO 0); -- Incond
+        saida_jump : OUT unsigned(6 DOWNTO 0); -- Incond
 
-        saida_jrult : OUT unsigned(9 DOWNTO 0); -- Cond BLT
+        saida_jrult : OUT unsigned(6 DOWNTO 0); -- Cond BLT
         seletor_jrult : OUT STD_LOGIC; -- Cond BLT
         soma_ou_sub_jrult : OUT STD_LOGIC; -- Cond BLT
 
@@ -41,11 +41,24 @@ ARCHITECTURE a_un_ctrl OF un_ctrl IS
         );
     END COMPONENT;
 
+    COMPONENT reg1bit IS
+		PORT (
+			clk : IN STD_LOGIC;
+			rst : IN STD_LOGIC;
+			wr_en : IN STD_LOGIC;
+			data_out : OUT STD_LOGIC;
+			data_in : IN STD_LOGIC
+		);
+	END COMPONENT;
+
     -- Unidade de Controle --
     SIGNAL estado_maq : unsigned(1 DOWNTO 0) := "00";
     SIGNAL imm_op : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL opcode : unsigned(3 DOWNTO 0) := "0000";
     SIGNAL entrada_uc : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL wr_flag : STD_LOGIC := '0';
+    SIGNAL flag_reg_C : STD_LOGIC := '0';
+
 
     -- Banco de Registradores --
     SIGNAL registrador_src : unsigned(2 DOWNTO 0) := "000";
@@ -59,263 +72,60 @@ BEGIN
         estado => estado_maq
     );
 
+    reg_flag_c_0 : reg1bit PORT MAP(
+		clk => clk,
+		rst => rst,
+		wr_en => wr_flag,
+		data_out => flag_reg_C,
+		data_in => flag_Carry_o
+	);
+
+    --FETCH
     wr_en_pc <= '0' WHEN estado_maq = "00" ELSE
         '0' WHEN estado_maq = "01" ELSE
         '1' WHEN estado_maq = "10" ELSE
         '0';
 
-    wr_result_en <= '0' WHEN estado_maq = "00" ELSE
-        '0' WHEN estado_maq = "01" ELSE
-        '1' WHEN (estado_maq = "10" AND opcode = "0000") ELSE
+    --DECODE
+    entrada_uc <= leitura_de_instrucao;
+    opcode <= entrada_uc(15 DOWNTO 12);
+    imediato_op <= entrada_uc(11);
+    imm_op <= "00000000000" & entrada_uc(10 DOWNTO 6) WHEN opcode = "0101" ELSE
+        "00000000" & entrada_uc(10 DOWNTO 3);
+    valor_imediato_op <= imm_op;
+    registrador_dst <= entrada_uc(5 DOWNTO 3);
+    registrador_src <= entrada_uc(2 DOWNTO 0);
+    reg2 <= registrador_src;
+    reg1 <= registrador_dst  WHEN opcode = "0101" else
+        "111";
+    saida_jump <= (entrada_uc(6 DOWNTO 0));
+    saida_jrult <= (entrada_uc(6 DOWNTO 0));
+    soma_ou_sub_jrult <= entrada_uc(11);
+    register_code <= registrador_dst  WHEN opcode = "0101" else
+        "111";
+
+    
+    seletor_ula <= "010" WHEN opcode  = "0011"  else --ADD
+        "011" WHEN opcode = "0100"  else            --SUB
+        "100" WHEN opcode = "0101"  else            --MOV
+        "001" WHEN opcode = "0110"  else            --CP
+        "000";
+
+    wr_flag <= '1' WHEN opcode = "0110" else
         '0';
 
-    PROCESS (estado_maq, opcode)
-    BEGIN
-        CASE estado_maq IS
-            WHEN "00" =>
-                wr_en_pc <= '0';
-                wr_result_en <= '0';
-                seletor_jump <= '0';
-                entrada_uc <= leitura_de_instrucao;
-            WHEN "01" =>
-                opcode <= entrada_uc(15 DOWNTO 12);
-                registrador_src <= entrada_uc(2 DOWNTO 0);
-                registrador_dst <= entrada_uc(5 DOWNTO 3);
-                imm_op <= "00000000000" & entrada_uc(10 DOWNTO 6);
-            WHEN "10" =>
-                wr_en_pc <= '1';
-                CASE opcode IS
-                    WHEN "0001" =>
-                        -- Salto Incondicional --
-                        -- B"0001_00_EEEEEEEEEE"
-                        -- E: endereço (10-bits)
-                        seletor_jump <= '1';
-                        saida_jump <= (entrada_uc(9 DOWNTO 0) - 1);
-                        seletor_jrult <= '0';
-                        saida_jrult <= "0000000000";
-                    WHEN "1000" =>
-                        -- MOV reg/imediato --
-                        -- B"1000_I_CCCCC_ddd_sss"
-                        -- I: 0 se registrador, 1 se imediato (1-bit)
-                        -- C: conteúdo (dado de 6-bits)
-                        -- d: registrador destino (3-bits)
-                        -- s: registrador fonte (3-bits)
-                        reg1 <= registrador_dst;
-                        reg2 <= registrador_src;
-                        imediato_op <= entrada_uc(11);
-                        valor_imediato_op <= imm_op;
-                        seletor_ula <= "100";
-                        wr_result_en <= '1';
-                        register_code <= registrador_dst;
-                        seletor_jrult <= '0';
-                        saida_jrult <= "0000000000";
-                    WHEN "0010" =>
-                        -- ADD reg/imediato --
-                        -- B"0010_I_CCCCC_ddd_sss"
-                        -- I: 0 se registrador, 1 se imediato (1-bit)
-                        -- C: conteúdo (dado de 6-bits)
-                        -- d: registrador destino (3-bits)
-                        -- s: registrador fonte (3-bits)
-                        -- ddd+sss OU ddd+imm
-                        reg1 <= registrador_dst;
-                        reg2 <= registrador_src;
-                        imediato_op <= entrada_uc(11);
-                        valor_imediato_op <= imm_op;
-                        seletor_ula <= "010";
-                        wr_result_en <= '1';
-                        register_code <= registrador_dst;
-                        seletor_jrult <= '0';
-                        saida_jrult <= "0000000000";
-                    WHEN "0100" =>
-                        -- SUB reg/imediato --
-                        -- B"0100_I_CCCCCC_ddd_sss"
-                        -- I: 0 se registrador, 1 se imediato (1-bit)
-                        -- C: conteúdo (dado de 6-bits)
-                        -- d: registrador destino (3-bits)
-                        -- s: registrador fonte (3-bits)
-                        -- ddd-sss OU ddd-imm
-                        reg1 <= registrador_dst;
-                        reg2 <= registrador_src;
-                        imediato_op <= entrada_uc(11);
-                        valor_imediato_op <= imm_op;
-                        seletor_ula <= "011";
-                        wr_result_en <= '1';
-                        register_code <= registrador_dst;
-                        seletor_jrult <= '0';
-                        saida_jrult <= "0000000000";
-                    WHEN "0110" =>
-                        -- CP reg/imediato
-                        -- B"0110_I_CCCCC_ddd_sss"
-                        -- I: 0 se registrador, 1 se imediato (1-bit)
-                        -- C: conteúdo (dado de 6-bits)
-                        -- d: registrador_1 (3-bits)
-                        -- s: registrador_2 (3-bits)
-                        seletor_ula <= "001"; -- operação menor
-                        reg1 <= registrador_dst;
-                        reg2 <= registrador_src;
-                        imediato_op <= entrada_uc(11);
-                        valor_imediato_op <= imm_op;
-                        seletor_jrult <= '0';
-                        saida_jrult <= "0000000000";
-                    WHEN "1001" =>
-                        -- JRULT -> PC = PC + X;
-                        -- B"1001_S_Y_XXXXXXXXXX"
-                        -- Y: não importa
-                        -- X: endereco do branch
-                        -- S: 0 para soma 1 para subtracao do imediato
-                        CASE flag_Carry_o IS
-                            WHEN '0' =>
-                                seletor_jrult <= '0';
-                                saida_jrult <= "0000000000";
-                                soma_ou_sub_jrult <= '0';
-                            WHEN '1' =>
-                                seletor_jrult <= '1';
-                                saida_jrult <= (entrada_uc(9 DOWNTO 0));
-                                soma_ou_sub_jrult <= entrada_uc(11);
-                            WHEN OTHERS =>
-                                seletor_jrult <= '0';
-                                saida_jrult <= "0000000000";
-                                soma_ou_sub_jrult <= '0';
-                        END CASE;
-                    WHEN OTHERS => -- NOP
-                        imediato_op <= '0';
-                        valor_imediato_op <= "0000000000000000";
-                        seletor_ula <= "000";
-                        wr_result_en <= '0';
-                        register_code <= "000";
-                        seletor_jrult <= '0';
-                        saida_jrult <= "0000000000";
-                END CASE;
-            WHEN OTHERS =>
-                wr_en_pc <= '0';
-                wr_result_en <= '0';
-                seletor_jump <= '0';
-                seletor_jrult <= '0';
-                saida_jrult <= "0000000000";
-        END CASE;
-    END PROCESS;
-    wr_result_en <= ;
-    seletor_jump <= ;
-    entrada_uc <= leitura_de_instrucao;
-    WHEN =>
-    opcode <= entrada_uc(15 DOWNTO 12);
-    registrador_src <= entrada_uc(2 DOWNTO 0);
-    registrador_dst <= entrada_uc(5 DOWNTO 3);
-    imm_op <= & entrada_uc(10 DOWNTO 6);
-    WHEN =>
-    wr_en_pc <= ;
-    CASE opcode IS
-        WHEN =>
-            7
-            8
-            9
-            seletor_jump <= ;
-            saida_jump <= (entrada_uc(9 DOWNTO 0) - 1);
-            seletor_jrult <= ;
-            saida_jrult <= ;
-        WHEN =>
-            10
-            11
-            12
-            13
-            14
-            15
-            reg1 <= registrador_dst;
-            reg2 <= registrador_src;
-            imediato_op <= entrada_uc(11);
-            valor_imediato_op <= imm_op;
-            seletor_ula <= ;
-            wr_result_en <= ;
-            register_code <= registrador_dst;
-            seletor_jrult <= ;
-            saida_jrult <= ;
-        WHEN =>
-            16
-            17
-            18
-            19
-            20
-            21
-            22
-            reg1 <= registrador_dst;
-            reg2 <= registrador_src;
-            imediato_op <= entrada_uc(11);
-            valor_imediato_op <= imm_op;
-            seletor_ula <= ;
-            wr_result_en <= ;
-            register_code <= registrador_dst;
-            seletor_jrult <= ;
-            saida_jrult <= ;
-        WHEN =>
-            23
-            24
-            25
-            26
-            27
-            28
-            29
-            reg1 <= registrador_dst;
-            reg2 <= registrador_src;
-            imediato_op <= entrada_uc(11);
-            valor_imediato_op <= imm_op;
-            seletor_ula <= ;
-            wr_result_en <= ;
-            register_code <= registrador_dst;
-            seletor_jrult <= ;
-            saida_jrult <= ;
-        WHEN =>
-            30
-            31
-            32
-            33
-            34
-            35
-            seletor_ula <= ;
-            36
-            reg1 <= registrador_dst;
-            reg2 <= registrador_src;
-            imediato_op <= entrada_uc(11);
-            valor_imediato_op <= imm_op;
-            seletor_jrult <= ;
-            saida_jrult <= ;
-        WHEN =>
-            37
-            38
-            39
-            40
-            41
-            CASE flag_Carry_o IS
-                WHEN =>
-                    seletor_jrult <= ;
-                    saida_jrult <= ;
-                    soma_ou_sub_jrult <= ;
-                WHEN =>
-                    seletor_jrult <= ;
-                    saida_jrult <= (entrada_uc(9 DOWNTO 0));
-                    soma_ou_sub_jrult <= entrada_uc(11);
-                WHEN OTHERS =>
-                    seletor_jrult <= ;
-                    saida_jrult <= ;
-                    soma_ou_sub_jrult <= ;
-            END CASE;
-        WHEN OTHERS => 42
-            imediato_op <= ;
-            valor_imediato_op <= ;
-            seletor_ula <= ;
-            wr_result_en <= ;
-            register_code <= ;
-            seletor_jrult <= ;
-            saida_jrult <= ;
-    END CASE;
-    WHEN OTHERS =>
-    wr_en_pc <= ;
-    wr_result_en <= ;
-    seletor_jump <= ;
-    seletor_jrult <= ;
-    saida_jrult <= ;
-END CASE;
-END PROCESS;
+    -- JUMP Incondicional
+    seletor_jump <= '1' WHEN opcode = "0010"  AND flag_reg_C = '1' else
+       '0';
+    
+    -- JRULT
+    seletor_jrult <= '1' WHEN opcode = "0111" else
+        '0';
 
-saida_estado <= estado_maq;
+    -- EXECUTE
+	wr_result_en <= '1' WHEN estado_maq = "10" AND (opcode = "0101" OR opcode = "0011" OR opcode = "0100" OR opcode = "0001") ELSE
+    '0';
+
+    saida_estado <= estado_maq;
 
 END ARCHITECTURE;

@@ -12,7 +12,7 @@ ARCHITECTURE a_processador_tb OF processador_tb IS
             clk : IN STD_LOGIC;
             rst : IN STD_LOGIC;
             estado : OUT unsigned(1 DOWNTO 0);
-            pc_saida : OUT unsigned(9 DOWNTO 0);
+            pc_saida : OUT unsigned(6 DOWNTO 0);
             registrador_de_instr : OUT unsigned(15 DOWNTO 0);
             saida_banco_reg1 : OUT unsigned(15 DOWNTO 0);
             saida_banco_reg2 : OUT unsigned(15 DOWNTO 0);
@@ -25,7 +25,7 @@ ARCHITECTURE a_processador_tb OF processador_tb IS
     CONSTANT period_time : TIME := 100 ns;
     SIGNAL finished : STD_LOGIC := '0';
     SIGNAL estado : unsigned(1 DOWNTO 0) := "00";
-    SIGNAL pc_saida : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL pc_saida : unsigned(6 DOWNTO 0) := "0000000";
     SIGNAL registrador_de_instr : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL saida_banco_reg1 : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL saida_banco_reg2 : unsigned(15 DOWNTO 0) := "0000000000000000";

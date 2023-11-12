@@ -7,7 +7,7 @@ ENTITY processador IS
         clk : IN STD_LOGIC;
         rst : IN STD_LOGIC;
         estado : OUT unsigned(1 DOWNTO 0);
-        pc_saida : OUT unsigned(9 DOWNTO 0);
+        pc_saida : OUT unsigned(6 DOWNTO 0);
         registrador_de_instr : OUT unsigned(15 DOWNTO 0);
         saida_banco_reg1 : OUT unsigned(15 DOWNTO 0);
         saida_banco_reg2 : OUT unsigned(15 DOWNTO 0);
@@ -23,29 +23,22 @@ ARCHITECTURE a_processador OF processador IS
             clk : IN STD_LOGIC;
             rst : IN STD_LOGIC;
             wr_en : IN STD_LOGIC;
-            endereco_entrada_pc : IN unsigned(9 DOWNTO 0);
-            endereco_saida_pc : OUT unsigned(9 DOWNTO 0)
-        );
-    END COMPONENT;
-
-    COMPONENT converte IS
-        PORT (
-            num_complemento_dois : IN unsigned(9 DOWNTO 0);
-            num_normal : OUT unsigned(9 DOWNTO 0)
+            endereco_entrada_pc : IN unsigned(6 DOWNTO 0);
+            endereco_saida_pc : OUT unsigned(6 DOWNTO 0)
         );
     END COMPONENT;
 
     COMPONENT somador IS
         PORT (
-            entrada_somador : IN unsigned(9 DOWNTO 0);
-            saida_somador : OUT unsigned(9 DOWNTO 0)
+            entrada_somador : IN unsigned(6 DOWNTO 0);
+            saida_somador : OUT unsigned(6 DOWNTO 0)
         );
     END COMPONENT;
 
     COMPONENT rom IS
         PORT (
             clk : IN STD_LOGIC;
-            entrada_rom : IN unsigned(9 DOWNTO 0); -- 2^10 = 1024
+            entrada_rom : IN unsigned(6 DOWNTO 0); -- 2^10 = 1024
             saida_rom_dado : OUT unsigned(15 DOWNTO 0) -- Tamanho da instrucao
         );
     END COMPONENT;
@@ -58,9 +51,9 @@ ARCHITECTURE a_processador OF processador IS
 
             wr_en_pc : OUT STD_LOGIC;
             seletor_jump : OUT STD_LOGIC;
-            saida_jump : OUT unsigned(9 DOWNTO 0);
+            saida_jump : OUT unsigned(6 DOWNTO 0);
 
-            saida_jrult : OUT unsigned(9 DOWNTO 0); -- Cond BLT
+            saida_jrult : OUT unsigned(6 DOWNTO 0); -- Cond BLT
             seletor_jrult : OUT STD_LOGIC; -- Cond BLT
             soma_ou_sub_jrult : OUT STD_LOGIC; -- Cond BLT
 
@@ -104,10 +97,10 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL wr_en_pc_uc : STD_LOGIC := '0';
     SIGNAL saida_rom : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL ctrl_salto : STD_LOGIC := '0';
-    SIGNAL valor_jump : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL valor_jump : unsigned(6 DOWNTO 0) := "0000000";
     SIGNAL ctrl_jrult : STD_LOGIC := '0';
-    SIGNAL valor_jrult : unsigned(9 DOWNTO 0) := "0000000000";
-    SIGNAL saida_pc : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL valor_jrult : unsigned(6 DOWNTO 0) := "0000000";
+    SIGNAL saida_pc : unsigned(6 DOWNTO 0) := "0000000";
 
     -- Banco de Registradores --
     SIGNAL entrada_reg1 : unsigned(2 DOWNTO 0) := "000";
@@ -130,14 +123,14 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL flag_C_s : STD_LOGIC := '0';
 
     -- Program Counter --
-    SIGNAL mux_2x1x1_entrada_pc : unsigned(9 DOWNTO 0) := "0000000000";
-    SIGNAL saida_somador : unsigned(9 DOWNTO 0) := "0000000000";
-    SIGNAL saida_endereco_pc : unsigned(9 DOWNTO 0) := "0000000000";
-    SIGNAL demux_1x1x2 : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL mux_2x1x1_entrada_pc : unsigned(6 DOWNTO 0) := "0000000";
+    SIGNAL saida_somador : unsigned(6 DOWNTO 0) := "0000000";
+    SIGNAL saida_endereco_pc : unsigned(6 DOWNTO 0) := "0000000";
+    SIGNAL demux_1x1x2 : unsigned(6 DOWNTO 0) := "0000000";
     SIGNAL soma_ou_sub_jrult : STD_LOGIC := '0';
-    SIGNAL num_complemento_dois : unsigned(9 DOWNTO 0) := "0000000000";
-    SIGNAL num_normal : unsigned(9 DOWNTO 0) := "0000000000";
-    SIGNAL sub : unsigned(9 DOWNTO 0) := "0000000000";
+    SIGNAL num_complemento_dois : unsigned(6 DOWNTO 0) := "0000000";
+    SIGNAL num_normal : unsigned(6 DOWNTO 0) := "0000000";
+    SIGNAL sub : unsigned(6 DOWNTO 0) := "0000000";
 
 BEGIN
 
@@ -150,11 +143,6 @@ BEGIN
     );
 
     sub <= (saida_endereco_pc - valor_jrult);
-
-    converte_0 : converte PORT MAP(
-        num_complemento_dois => sub,
-        num_normal => num_normal
-    );
 
     somador_0 : somador PORT MAP(
         entrada_somador => demux_1x1x2,
