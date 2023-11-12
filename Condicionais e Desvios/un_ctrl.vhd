@@ -57,7 +57,7 @@ ARCHITECTURE a_un_ctrl OF un_ctrl IS
     SIGNAL opcode : unsigned(3 DOWNTO 0) := "0000";
     SIGNAL entrada_uc : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL wr_flag : STD_LOGIC := '0';
-    SIGNAL flag_reg_C : STD_LOGIC := '0';
+    SIGNAL flag_reg_c_s : STD_LOGIC := '0';
 
 
     -- Banco de Registradores --
@@ -72,11 +72,11 @@ BEGIN
         estado => estado_maq
     );
 
-    reg_flag_c_0 : reg1bit PORT MAP(
+    reg1bit_flag : reg1bit PORT MAP(
 		clk => clk,
 		rst => rst,
 		wr_en => wr_flag,
-		data_out => flag_reg_C,
+		data_out => flag_reg_c_s,
 		data_in => flag_Carry_o
 	);
 
@@ -110,16 +110,17 @@ BEGIN
         "100" WHEN opcode = "0101"  else            --MOV
         "001" WHEN opcode = "0110"  else            --CP
         "000";
-
+    
+    -- Quando escrever na flag
     wr_flag <= '1' WHEN opcode = "0110" else
         '0';
 
     -- JUMP Incondicional
-    seletor_jump <= '1' WHEN opcode = "0010"  AND flag_reg_C = '1' else
+    seletor_jump <= '1' WHEN opcode = "0010" else
        '0';
     
     -- JRULT
-    seletor_jrult <= '1' WHEN opcode = "0111" else
+    seletor_jrult <= '1' WHEN opcode = "0111" AND flag_reg_c_s = '1' else
         '0';
 
     -- EXECUTE

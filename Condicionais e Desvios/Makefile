@@ -14,6 +14,7 @@ all:
 	ghdl -a ula.vhd
 	ghdl -a reg16bits.vhd
 	ghdl -a mux16bits_8x3x1.vhd
+	ghdl -a reg1bit.vhd
 	ghdl -a decoder_3x8.vhd
 	ghdl -a banco_de_registradores.vhd
 	ghdl -a processador.vhd
