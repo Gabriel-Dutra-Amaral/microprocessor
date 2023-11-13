@@ -116,7 +116,7 @@ BEGIN
         '0';
 
     -- JUMP Incondicional
-    seletor_jump <= '1' WHEN opcode = "0010" else
+    seletor_jump <= '1' WHEN opcode = "0010" AND flag_reg_c_s = '1' else
        '0';
     
     -- JRULT

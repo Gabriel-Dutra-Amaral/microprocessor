@@ -153,7 +153,7 @@ BEGIN
         num_normal WHEN (ctrl_jrult = '1' AND soma_ou_sub_jrult = '1') ELSE
         saida_endereco_pc;
 
-    mux_2x1x1_entrada_pc <= valor_jump WHEN ctrl_salto = '1' ELSE
+    mux_2x1x1_entrada_pc <= (valor_jump - "0000001") WHEN ctrl_salto = '1' ELSE
         saida_somador;
 
     rom_0 : rom PORT MAP(
