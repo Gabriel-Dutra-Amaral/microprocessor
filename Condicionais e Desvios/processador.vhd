@@ -55,7 +55,6 @@ ARCHITECTURE a_processador OF processador IS
 
             saida_jrult : OUT unsigned(6 DOWNTO 0); -- Cond BLT
             seletor_jrult : OUT STD_LOGIC; -- Cond BLT
-            soma_ou_sub_jrult : OUT STD_LOGIC; -- Cond BLT
 
             reg1 : OUT unsigned(2 DOWNTO 0);
             reg2 : OUT unsigned(2 DOWNTO 0);
@@ -171,7 +170,6 @@ BEGIN
         saida_jump => valor_jump,
         saida_jrult => valor_jrult,
         seletor_jrult => ctrl_jrult,
-        soma_ou_sub_jrult => soma_ou_sub_jrult,
         reg1 => entrada_reg1,
         reg2 => entrada_reg2,
         wr_result_en => escreve_registrador,

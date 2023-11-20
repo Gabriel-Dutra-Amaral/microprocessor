@@ -14,7 +14,6 @@ ENTITY un_ctrl IS
 
         saida_jrult : OUT unsigned(6 DOWNTO 0); -- Cond BLT
         seletor_jrult : OUT STD_LOGIC; -- Cond BLT
-        soma_ou_sub_jrult : OUT STD_LOGIC; -- Cond BLT
 
         reg1 : OUT unsigned(2 DOWNTO 0);
         reg2 : OUT unsigned(2 DOWNTO 0);
@@ -100,7 +99,6 @@ BEGIN
         "111";
     saida_jump <= (entrada_uc(6 DOWNTO 0));
     saida_jrult <= (entrada_uc(6 DOWNTO 0));
-    soma_ou_sub_jrult <= entrada_uc(11);
     register_code <= registrador_dst  WHEN opcode = "0101" else
         "111";
 
@@ -112,7 +110,7 @@ BEGIN
         "000";
     
     -- Quando escrever na flag
-    wr_flag <= '1' WHEN opcode = "0110" else
+    wr_flag <= '1' WHEN (opcode = "0110"  OR opcode = "0011" OR opcode = "0100") else
         '0';
 
     -- JUMP Incondicional

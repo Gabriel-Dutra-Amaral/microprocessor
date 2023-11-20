@@ -27,8 +27,7 @@ ARCHITECTURE a_ula OF ula IS
         PORT (
             x : IN unsigned(15 DOWNTO 0);
             y : IN unsigned(15 DOWNTO 0);
-            menor_out : OUT unsigned(15 DOWNTO 0);
-            flag_C : OUT std_logic
+            menor_out : OUT unsigned(15 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -85,8 +84,7 @@ BEGIN
     menor1 : menor PORT MAP(
         x => entrada_0,
         y => entrada_1,
-        menor_out => menor_operac_1,
-        flag_C => out_flag_carry
+        menor_out => menor_operac_1
     );
 
     soma1 : soma PORT MAP(
@@ -116,5 +114,8 @@ BEGIN
         sel => seletor_op,
         saida => saida_ula
     );
+
+    out_flag_carry <= '1' when entrada_0 < entrada_1 else
+        '0';
 
 END ARCHITECTURE;
