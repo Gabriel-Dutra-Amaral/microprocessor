@@ -38,7 +38,7 @@ ARCHITECTURE a_processador OF processador IS
     COMPONENT rom IS
         PORT (
             clk : IN STD_LOGIC;
-            entrada_rom : IN unsigned(6 DOWNTO 0); -- 2^10 = 1024
+            entrada_rom : IN unsigned(6 DOWNTO 0); -- 2^7
             saida_rom_dado : OUT unsigned(15 DOWNTO 0) -- Tamanho da instrucao
         );
     END COMPONENT;
@@ -122,38 +122,31 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL flag_C_s : STD_LOGIC := '0';
 
     -- Program Counter --
-    SIGNAL mux_2x1x1_entrada_pc : unsigned(6 DOWNTO 0) := "0000000";
+    SIGNAL mux_3x2x1_entrada_pc : unsigned(6 DOWNTO 0) := "0000000";
     SIGNAL saida_somador : unsigned(6 DOWNTO 0) := "0000000";
     SIGNAL saida_endereco_pc : unsigned(6 DOWNTO 0) := "0000000";
-    SIGNAL demux_1x1x2 : unsigned(6 DOWNTO 0) := "0000000";
     SIGNAL soma_ou_sub_jrult : STD_LOGIC := '0';
     SIGNAL num_complemento_dois : unsigned(6 DOWNTO 0) := "0000000";
     SIGNAL num_normal : unsigned(6 DOWNTO 0) := "0000000";
-    SIGNAL sub : unsigned(6 DOWNTO 0) := "0000000";
 
 BEGIN
+
+    mux_3x2x1_entrada_pc <= (valor_jump) WHEN (ctrl_salto = '1' AND ctrl_jrult = '0') ELSE
+        (saida_endereco_pc + valor_jrult) WHEN (ctrl_salto = '0' AND ctrl_jrult = '1') ELSE
+        saida_somador;
 
     pc_0 : pc PORT MAP(
         clk => clk,
         rst => rst,
         wr_en => wr_en_pc_uc,
-        endereco_entrada_pc => mux_2x1x1_entrada_pc,
+        endereco_entrada_pc => mux_3x2x1_entrada_pc,
         endereco_saida_pc => saida_endereco_pc
     );
 
-    sub <= (saida_endereco_pc - valor_jrult);
-
     somador_0 : somador PORT MAP(
-        entrada_somador => demux_1x1x2,
+        entrada_somador => saida_endereco_pc,
         saida_somador => saida_somador
     );
-
-    demux_1x1x2 <= (saida_endereco_pc + valor_jrult) WHEN (ctrl_jrult = '1' AND soma_ou_sub_jrult = '0') ELSE
-        num_normal WHEN (ctrl_jrult = '1' AND soma_ou_sub_jrult = '1') ELSE
-        saida_endereco_pc;
-
-    mux_2x1x1_entrada_pc <= (valor_jump - "0000001") WHEN ctrl_salto = '1' ELSE
-        saida_somador;
 
     rom_0 : rom PORT MAP(
         clk => clk,
