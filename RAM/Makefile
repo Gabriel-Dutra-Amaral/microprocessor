@@ -17,6 +17,7 @@ all:
 	ghdl -a reg1bit.vhd
 	ghdl -a decoder_3x8.vhd
 	ghdl -a banco_de_registradores.vhd
+	ghdl -a ram.vhd
 	ghdl -a processador.vhd
 	ghdl -a processador_tb.vhd
 	ghdl -e processador_tb

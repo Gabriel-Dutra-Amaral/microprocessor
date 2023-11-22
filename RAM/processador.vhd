@@ -60,6 +60,9 @@ ARCHITECTURE a_processador OF processador IS
             reg2 : OUT unsigned(2 DOWNTO 0);
             wr_result_en : OUT STD_LOGIC;
             register_code : OUT unsigned(2 DOWNTO 0);
+
+            wr_en_ram : OUT STD_LOGIC; -- RAM
+
             valor_imediato_op : OUT unsigned(15 DOWNTO 0);
             seletor_ula : OUT unsigned(2 DOWNTO 0);
             imediato_op : OUT STD_LOGIC;
@@ -89,6 +92,16 @@ ARCHITECTURE a_processador OF processador IS
             seletor_op : IN unsigned(2 DOWNTO 0);
             saida_ula : OUT unsigned(15 DOWNTO 0);
             out_flag_Carry : OUT STD_LOGIC
+        );
+    END COMPONENT;
+
+    COMPONENT ram IS
+        PORT (
+            clk : IN STD_LOGIC;
+            endereco : IN unsigned(6 DOWNTO 0);
+            wr_en : IN STD_LOGIC;
+            dado_in : IN unsigned(15 DOWNTO 0);
+            dado_out : OUT unsigned(15 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -129,6 +142,10 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL num_complemento_dois : unsigned(6 DOWNTO 0) := "0000000";
     SIGNAL num_normal : unsigned(6 DOWNTO 0) := "0000000";
 
+    -- RAM --
+    SIGNAL wr_en_ram : STD_LOGIC := '0';
+    SIGNAL saida_ram : unsigned(15 DOWNTO 0) := "0000000000000000";
+
 BEGIN
 
     mux_3x2x1_entrada_pc <= (valor_jump) WHEN (ctrl_salto = '1' AND ctrl_jrult = '0') ELSE
@@ -167,6 +184,7 @@ BEGIN
         reg2 => entrada_reg2,
         wr_result_en => escreve_registrador,
         register_code => codigo_registrador,
+        wr_en_ram => wr_en_ram,
         valor_imediato_op => valor_imediato_op,
         seletor_ula => seleciona_op_ula,
         imediato_op => eh_imediato,
@@ -195,6 +213,14 @@ BEGIN
         seletor_op => seleciona_op_ula,
         saida_ula => saida_ula,
         out_flag_carry => flag_C_s
+    );
+
+    ram_0 : ram PORT MAP(
+        clk => clk,
+        endereco => saida_ula,
+        wr_en => wr_en_ram,
+        dado_in => saida_reg2,
+        dado_out => saida_ram
     );
 
     estado <= valor_do_estado;

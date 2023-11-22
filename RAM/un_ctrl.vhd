@@ -20,6 +20,8 @@ ENTITY un_ctrl IS
         wr_result_en : OUT STD_LOGIC;
         register_code : OUT unsigned(2 DOWNTO 0);
 
+        wr_en_ram : OUT STD_LOGIC; -- RAM: 0 -> Lendo & 1 -> Escrevendo
+
         valor_imediato_op : OUT unsigned(15 DOWNTO 0);
         seletor_ula : OUT unsigned(2 DOWNTO 0);
         imediato_op : OUT STD_LOGIC;
