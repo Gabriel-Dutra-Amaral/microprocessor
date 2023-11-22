@@ -53,8 +53,8 @@ ARCHITECTURE a_un_ctrl OF un_ctrl IS
     -- Unidade de Controle --
     SIGNAL estado_maq : unsigned(1 DOWNTO 0) := "00";
     SIGNAL valor_imm_op : unsigned(15 DOWNTO 0) := "0000000000000000";
-    SIGNAL valor_soma_subt : unsigned(15 DOWNTO 0) := "0000000000000000";
-    SIGNAL valor_comp_mov : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL valor_soma_subt_cmp : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL valor_mov : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL opcode : unsigned(3 DOWNTO 0) := "0000";
     SIGNAL entrada_uc : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL wr_flag : STD_LOGIC := '0';
@@ -91,11 +91,11 @@ BEGIN
     opcode <= entrada_uc(15 DOWNTO 12);
     imediato_op <= entrada_uc(11);
 
-    valor_soma_subt <= "00000000000" & entrada_uc(10 DOWNTO 6);
-    valor_comp_mov <= "00000000" & entrada_uc(10 DOWNTO 3);
+    valor_soma_subt_cmp <= "00000000" & entrada_uc(10 DOWNTO 3);
+    valor_mov <= "00000000000" & entrada_uc(10 DOWNTO 6);
 
-    valor_imm_op <= valor_soma_subt WHEN opcode = "0011" OR opcode = "0100" ELSE
-        valor_comp_mov WHEN opcode = "0110" OR opcode = "0101" ELSE
+    valor_imm_op <= valor_soma_subt_cmp WHEN (opcode = "0011" OR opcode = "0100" OR opcode = "0110") ELSE
+        valor_mov WHEN (opcode = "0101") ELSE
         "0000000000000000";
 
     valor_imediato_op <= valor_imm_op;
@@ -125,7 +125,7 @@ BEGIN
         '0';
 
     -- JUMP Incondicional
-    seletor_jump <= '1' WHEN (opcode = "0010" AND flag_reg_c_s = '1') ELSE
+    seletor_jump <= '1' WHEN (opcode = "0010") ELSE
         '0';
 
     -- JRULT
