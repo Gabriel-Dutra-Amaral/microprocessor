@@ -10,6 +10,7 @@ all:
 	ghdl -a soma.vhd
 	ghdl -a subtr.vhd
 	ghdl -a mov.vhd
+	ghdl -a load.vhd
 	ghdl -a mux16bits.vhd
 	ghdl -a ula.vhd
 	ghdl -a reg16bits.vhd

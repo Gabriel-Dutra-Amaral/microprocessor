@@ -56,6 +56,7 @@ ARCHITECTURE a_un_ctrl OF un_ctrl IS
     SIGNAL estado_maq : unsigned(1 DOWNTO 0) := "00";
     SIGNAL valor_imm_op : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL valor_soma_subt_cmp : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL valor_ram : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL valor_mov : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL opcode : unsigned(3 DOWNTO 0) := "0000";
     SIGNAL entrada_uc : unsigned(15 DOWNTO 0) := "0000000000000000";
@@ -91,13 +92,16 @@ BEGIN
     --DECODE
     entrada_uc <= leitura_de_instrucao;
     opcode <= entrada_uc(15 DOWNTO 12);
-    imediato_op <= entrada_uc(11);
+    imediato_op <= '1' WHEN (entrada_uc(11) = '1' OR opcode = "1000") ELSE
+        '0';
 
     valor_soma_subt_cmp <= "00000000" & entrada_uc(10 DOWNTO 3);
     valor_mov <= "00000000000" & entrada_uc(10 DOWNTO 6);
+    valor_ram <= "000000000" & entrada_uc(9 DOWNTO 3);
 
     valor_imm_op <= valor_soma_subt_cmp WHEN (opcode = "0011" OR opcode = "0100" OR opcode = "0110") ELSE
         valor_mov WHEN (opcode = "0101") ELSE
+        valor_ram WHEN (opcode = "1000") ELSE
         "0000000000000000";
 
     valor_imediato_op <= valor_imm_op;
@@ -120,10 +124,15 @@ BEGIN
         "011" WHEN opcode = "0100" ELSE --SUB
         "100" WHEN opcode = "0101" ELSE --MOV
         "001" WHEN opcode = "0110" ELSE --CP
+        "101" WHEN opcode = "1000" ELSE -- LOAD
         "000";
 
     -- Quando escrever na flag
     wr_flag <= '1' WHEN (opcode = "0110" OR opcode = "0011" OR opcode = "0100") ELSE
+        '0';
+
+    -- Escrita na RAM
+    wr_en_ram <= '1' WHEN (opcode = "1000" AND entrada_uc(11 DOWNTO 10) = "01") ELSE
         '0';
 
     -- JUMP Incondicional

@@ -217,7 +217,7 @@ BEGIN
 
     ram_0 : ram PORT MAP(
         clk => clk,
-        endereco => saida_ula,
+        endereco => saida_ula(6 DOWNTO 0),
         wr_en => wr_en_ram,
         dado_in => saida_reg2,
         dado_out => saida_ram

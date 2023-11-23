@@ -9,7 +9,7 @@ ENTITY ula IS
         seletor_op : IN unsigned(2 DOWNTO 0);
 
         saida_ula : OUT unsigned(15 DOWNTO 0);
-        out_flag_carry : OUT std_logic
+        out_flag_carry : OUT STD_LOGIC
     );
 END ENTITY;
 
@@ -55,6 +55,14 @@ ARCHITECTURE a_ula OF ula IS
         );
     END COMPONENT;
 
+    COMPONENT load IS
+        PORT (
+            x : IN unsigned(15 DOWNTO 0);
+            y : IN unsigned(15 DOWNTO 0);
+            load_out : OUT unsigned(15 DOWNTO 0)
+        );
+    END COMPONENT;
+
     COMPONENT mux16bits IS
         PORT (
             entr0 : IN unsigned(15 DOWNTO 0);
@@ -62,6 +70,7 @@ ARCHITECTURE a_ula OF ula IS
             entr2 : IN unsigned(15 DOWNTO 0);
             entr3 : IN unsigned(15 DOWNTO 0);
             entr4 : IN unsigned(15 DOWNTO 0);
+            entr5 : IN unsigned(15 DOWNTO 0);
             sel : IN unsigned(2 DOWNTO 0);
             saida : OUT unsigned(15 DOWNTO 0)
         );
@@ -72,6 +81,7 @@ ARCHITECTURE a_ula OF ula IS
     SIGNAL soma_operac_2 : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL subtr_operac_3 : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL mov_operac_4 : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL load_operac_5 : unsigned(15 DOWNTO 0) := "0000000000000000";
 
 BEGIN
 
@@ -105,17 +115,24 @@ BEGIN
         mov_out => mov_operac_4
     );
 
+    load1 : load PORT MAP(
+        x => entrada_0,
+        y => entrada_1,
+        load_out => load_operac_5
+    );
+
     mux16bits1 : mux16bits PORT MAP(
         entr0 => maior_operac_0,
         entr1 => menor_operac_1,
         entr2 => soma_operac_2,
         entr3 => subtr_operac_3,
         entr4 => mov_operac_4,
+        entr5 => load_operac_5,
         sel => seletor_op,
         saida => saida_ula
     );
 
-    out_flag_carry <= '1' when entrada_0 < entrada_1 else
+    out_flag_carry <= '1' WHEN entrada_0 < entrada_1 ELSE
         '0';
 
 END ARCHITECTURE;
