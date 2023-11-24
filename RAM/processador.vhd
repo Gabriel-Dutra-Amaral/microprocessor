@@ -62,6 +62,7 @@ ARCHITECTURE a_processador OF processador IS
             register_code : OUT unsigned(2 DOWNTO 0);
 
             wr_en_ram : OUT STD_LOGIC; -- RAM
+            seletor_write_data : OUT STD_LOGIC;
 
             valor_imediato_op : OUT unsigned(15 DOWNTO 0);
             seletor_ula : OUT unsigned(2 DOWNTO 0);
@@ -145,6 +146,8 @@ ARCHITECTURE a_processador OF processador IS
     -- RAM --
     SIGNAL wr_en_ram : STD_LOGIC := '0';
     SIGNAL saida_ram : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL sel_banco_ram : STD_LOGIC := '0';
+    SIGNAL mux_ula_ram_out : unsigned(15 DOWNTO 0) := "0000000000000000";
 
 BEGIN
 
@@ -185,12 +188,16 @@ BEGIN
         wr_result_en => escreve_registrador,
         register_code => codigo_registrador,
         wr_en_ram => wr_en_ram,
+        seletor_write_data => sel_banco_ram,
         valor_imediato_op => valor_imediato_op,
         seletor_ula => seleciona_op_ula,
         imediato_op => eh_imediato,
         saida_estado => valor_do_estado,
         flag_Carry_o => flag_C_s
     );
+
+    mux_ula_ram_out <= saida_ram WHEN sel_banco_ram = '1' else
+        saida_ula;
 
     banco_0 : banco_de_registradores PORT MAP(
         seleciona_registrador_1 => entrada_reg1,
@@ -201,7 +208,7 @@ BEGIN
         rst => rst,
         saida_registrador_1 => saida_reg1,
         saida_registrador_2 => saida_reg2,
-        dado_registrador => saida_ula
+        dado_registrador => mux_ula_ram_out
     );
 
     mux_reg_imm <= saida_reg2 WHEN eh_imediato = '0' ELSE
@@ -217,9 +224,9 @@ BEGIN
 
     ram_0 : ram PORT MAP(
         clk => clk,
-        endereco => saida_ula(6 DOWNTO 0),
+        endereco => saida_reg2(6 downto 0),
         wr_en => wr_en_ram,
-        dado_in => saida_reg2,
+        dado_in => saida_reg1,
         dado_out => saida_ram
     );
 

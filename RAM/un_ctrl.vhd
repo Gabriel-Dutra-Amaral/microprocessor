@@ -21,6 +21,7 @@ ENTITY un_ctrl IS
         register_code : OUT unsigned(2 DOWNTO 0);
 
         wr_en_ram : OUT STD_LOGIC; -- RAM: 0 -> Lendo & 1 -> Escrevendo
+        seletor_write_data : OUT STD_LOGIC;
 
         valor_imediato_op : OUT unsigned(15 DOWNTO 0);
         seletor_ula : OUT unsigned(2 DOWNTO 0);
@@ -109,7 +110,7 @@ BEGIN
     registrador_dst <= entrada_uc(5 DOWNTO 3); -- MOV
     registrador_src <= entrada_uc(2 DOWNTO 0); -- MOV
 
-    reg1 <= registrador_dst WHEN opcode = "0101" ELSE
+    reg1 <= registrador_dst WHEN (opcode = "0101" OR opcode = "1000") ELSE
         "111";
 
     reg2 <= registrador_src;
@@ -134,6 +135,10 @@ BEGIN
     -- Escrita na RAM
     wr_en_ram <= '1' WHEN (opcode = "1000" AND entrada_uc(11 DOWNTO 10) = "01") ELSE
         '0';
+
+    -- Leitura da RAM
+    seletor_write_data <= '1' WHEN (opcode = "1000" AND estado_maq = "10" AND entrada_uc(11 DOWNTO 10) = "10") ELSE
+	    '0';
 
     -- JUMP Incondicional
     seletor_jump <= '1' WHEN (opcode = "0010") ELSE
