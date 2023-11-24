@@ -55,12 +55,16 @@ ARCHITECTURE a_un_ctrl OF un_ctrl IS
 
     -- Unidade de Controle --
     SIGNAL estado_maq : unsigned(1 DOWNTO 0) := "00";
+
     SIGNAL valor_imm_op : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL valor_soma_subt_cmp : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL valor_ram : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL valor_mov : unsigned(15 DOWNTO 0) := "0000000000000000";
+
     SIGNAL opcode : unsigned(3 DOWNTO 0) := "0000";
+
     SIGNAL entrada_uc : unsigned(15 DOWNTO 0) := "0000000000000000";
+
     SIGNAL wr_flag : STD_LOGIC := '0';
     SIGNAL flag_reg_c_s : STD_LOGIC := '0';
 
@@ -84,16 +88,18 @@ BEGIN
         data_in => flag_Carry_o
     );
 
-    --FETCH
+    -- FETCH --
     wr_en_pc <= '0' WHEN estado_maq = "00" ELSE
         '0' WHEN estado_maq = "01" ELSE
         '1' WHEN (estado_maq = "10" OR NOT opcode = "0001") ELSE
         '0';
 
-    --DECODE
+    -- DECODE --
     entrada_uc <= leitura_de_instrucao;
     opcode <= entrada_uc(15 DOWNTO 12);
-    imediato_op <= '1' WHEN (entrada_uc(11) = '1' OR opcode = "1000") ELSE
+
+    imediato_op <= '1' WHEN entrada_uc(11) = '1' ELSE
+        '1' WHEN opcode = "1000" ELSE
         '0';
 
     valor_soma_subt_cmp <= "00000000" & entrada_uc(10 DOWNTO 3);
@@ -138,7 +144,7 @@ BEGIN
 
     -- Leitura da RAM
     seletor_write_data <= '1' WHEN (opcode = "1000" AND estado_maq = "10" AND entrada_uc(11 DOWNTO 10) = "10") ELSE
-	    '0';
+        '0';
 
     -- JUMP Incondicional
     seletor_jump <= '1' WHEN (opcode = "0010") ELSE
@@ -148,7 +154,7 @@ BEGIN
     seletor_jrult <= '1' WHEN (opcode = "0111" AND flag_reg_c_s = '1') ELSE
         '0';
 
-    -- EXECUTE
+    -- EXECUTE --
     wr_result_en <= '1' WHEN estado_maq = "10" AND (opcode = "0101" OR opcode = "0011" OR opcode = "0100") ELSE
         '0';
 
