@@ -143,7 +143,7 @@ BEGIN
         '0';
 
     -- Leitura da RAM
-    seletor_write_data <= '1' WHEN (opcode = "1000" AND estado_maq = "10" AND entrada_uc(11 DOWNTO 10) = "10") ELSE
+    seletor_write_data <= '1' WHEN (opcode = "1000" AND estado_maq = "10" ) ELSE
         '0';
 
     -- JUMP Incondicional

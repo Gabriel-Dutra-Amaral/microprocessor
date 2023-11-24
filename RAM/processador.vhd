@@ -131,7 +131,7 @@ ARCHITECTURE a_processador OF processador IS
     -- ULA --
     SIGNAL seleciona_op_ula : unsigned(2 DOWNTO 0) := "000";
     SIGNAL saida_ula : unsigned(15 DOWNTO 0) := "0000000000000000";
-    SIGNAL mux_reg_imm : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL mux_reg_imm_ram : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL eh_imediato : STD_LOGIC := '0';
     SIGNAL flag_C_s : STD_LOGIC := '0';
 
@@ -147,7 +147,6 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL wr_en_ram : STD_LOGIC := '0';
     SIGNAL saida_ram : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL sel_banco_ram : STD_LOGIC := '0';
-    SIGNAL mux_ula_ram_out : unsigned(15 DOWNTO 0) := "0000000000000000";
 
 BEGIN
 
@@ -196,9 +195,6 @@ BEGIN
         flag_Carry_o => flag_C_s
     );
 
-    mux_ula_ram_out <= saida_ram WHEN sel_banco_ram = '1' else
-        saida_ula;
-
     banco_0 : banco_de_registradores PORT MAP(
         seleciona_registrador_1 => entrada_reg1,
         seleciona_registrador_2 => entrada_reg2,
@@ -208,15 +204,16 @@ BEGIN
         rst => rst,
         saida_registrador_1 => saida_reg1,
         saida_registrador_2 => saida_reg2,
-        dado_registrador => mux_ula_ram_out
+        dado_registrador => saida_ula
     );
 
-    mux_reg_imm <= saida_reg2 WHEN eh_imediato = '0' ELSE
+    mux_reg_imm_ram <= saida_ram WHEN sel_banco_ram = '1' ELSE
+        saida_reg2 WHEN eh_imediato = '0' ELSE
         valor_imediato_op;
 
     ula_0 : ula PORT MAP(
         entrada_0 => saida_reg1,
-        entrada_1 => mux_reg_imm,
+        entrada_1 => mux_reg_imm_ram,
         seletor_op => seleciona_op_ula,
         saida_ula => saida_ula,
         out_flag_carry => flag_C_s
