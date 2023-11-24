@@ -113,8 +113,8 @@ BEGIN
 
     valor_imediato_op <= valor_imm_op;
 
-    registrador_dst <= entrada_uc(5 DOWNTO 3); -- MOV
-    registrador_src <= entrada_uc(2 DOWNTO 0); -- MOV
+    registrador_dst <= entrada_uc(5 DOWNTO 3); -- MOV\LD
+    registrador_src <= entrada_uc(2 DOWNTO 0); -- MOV\LD
 
     reg1 <= registrador_dst WHEN (opcode = "0101" OR opcode = "1000") ELSE
         "111";
@@ -124,7 +124,7 @@ BEGIN
     saida_jump <= (entrada_uc(6 DOWNTO 0) - 1);
     saida_jrult <= entrada_uc(6 DOWNTO 0);
 
-    register_code <= registrador_dst WHEN opcode = "0101" ELSE
+    register_code <= registrador_dst WHEN (opcode = "0101" OR opcode = "1000") ELSE
         "111";
 
     seletor_ula <= "010" WHEN opcode = "0011" ELSE --ADD
@@ -155,7 +155,7 @@ BEGIN
         '0';
 
     -- EXECUTE --
-    wr_result_en <= '1' WHEN estado_maq = "10" AND (opcode = "0101" OR opcode = "0011" OR opcode = "0100") ELSE
+    wr_result_en <= '1' WHEN estado_maq = "10" AND (opcode = "0101" OR opcode = "0011" OR opcode = "0100" OR (opcode = "1000" AND entrada_uc(11 DOWNTO 10) = "10")) ELSE
         '0';
 
     seletor_jrult <= '1' WHEN opcode = "0111" ELSE
