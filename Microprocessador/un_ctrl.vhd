@@ -57,9 +57,9 @@ ARCHITECTURE a_un_ctrl OF un_ctrl IS
     SIGNAL estado_maq : unsigned(1 DOWNTO 0) := "00";
 
     SIGNAL valor_imm_op : unsigned(15 DOWNTO 0) := "0000000000000000";
-    SIGNAL valor_soma_subt_cmp : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL valor_soma_subt : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL valor_ram : unsigned(15 DOWNTO 0) := "0000000000000000";
-    SIGNAL valor_mov : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL valor_mov_cmp : unsigned(15 DOWNTO 0) := "0000000000000000";
 
     SIGNAL opcode : unsigned(3 DOWNTO 0) := "0000";
 
@@ -102,12 +102,12 @@ BEGIN
         '1' WHEN opcode = "1000" ELSE
         '0';
 
-    valor_soma_subt_cmp <= "00000000" & entrada_uc(10 DOWNTO 3);
-    valor_mov <= "00000000000" & entrada_uc(10 DOWNTO 6);
+    valor_soma_subt<= "00000000" & entrada_uc(10 DOWNTO 3);
+    valor_mov_cmp <= "00000000000" & entrada_uc(10 DOWNTO 6);
     valor_ram <= "000000000" & entrada_uc(9 DOWNTO 3);
 
-    valor_imm_op <= valor_soma_subt_cmp WHEN (opcode = "0011" OR opcode = "0100" OR opcode = "0110") ELSE
-        valor_mov WHEN (opcode = "0101") ELSE
+    valor_imm_op <= valor_soma_subt WHEN (opcode = "0100" OR opcode = "0011") ELSE
+        valor_mov_cmp WHEN (opcode = "0101" OR opcode = "0110") ELSE
         valor_ram WHEN (opcode = "1000") ELSE
         "0000000000000000";
 
@@ -139,7 +139,7 @@ BEGIN
         '0';
 
     -- Escrita na RAM
-    wr_en_ram <= '1' WHEN (opcode = "1000" AND entrada_uc(11 DOWNTO 10) = "01") ELSE
+    wr_en_ram <= '1' WHEN (opcode = "1000" AND estado_maq = "10" AND entrada_uc(11 DOWNTO 10) = "01") ELSE
         '0';
 
     -- Leitura da RAM
