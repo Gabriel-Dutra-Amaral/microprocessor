@@ -140,7 +140,7 @@ BEGIN
     '0';
 
     out_flag_zero <= '1' WHEN (entrada_0 - entrada_1) = "0000000000000000" ELSE
-    '1' WHEN zero = '0' ELSE
+    '1' WHEN zero = '1' ELSE
     '0';
 
 END ARCHITECTURE;
