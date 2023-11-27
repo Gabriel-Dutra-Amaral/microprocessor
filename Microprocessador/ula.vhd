@@ -9,17 +9,18 @@ ENTITY ula IS
         seletor_op : IN unsigned(2 DOWNTO 0);
 
         saida_ula : OUT unsigned(15 DOWNTO 0);
-        out_flag_carry : OUT STD_LOGIC
+
+        out_flag_carry : OUT STD_LOGIC;
+        out_flag_zero : OUT STD_LOGIC
     );
 END ENTITY;
 
 ARCHITECTURE a_ula OF ula IS
 
-    COMPONENT maior IS
+    COMPONENT op_and IS
         PORT (
-            x : IN unsigned(15 DOWNTO 0);
-            y : IN unsigned(15 DOWNTO 0);
-            maior_out : OUT unsigned(15 DOWNTO 0)
+            x, y : IN unsigned(15 DOWNTO 0);
+            and_out : OUT unsigned(15 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -76,7 +77,7 @@ ARCHITECTURE a_ula OF ula IS
         );
     END COMPONENT;
 
-    SIGNAL maior_operac_0 : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL and_operac_0 : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL menor_operac_1 : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL soma_operac_2 : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL subtr_operac_3 : unsigned(15 DOWNTO 0) := "0000000000000000";
@@ -85,10 +86,10 @@ ARCHITECTURE a_ula OF ula IS
 
 BEGIN
 
-    maior1 : maior PORT MAP(
+    and1 : op_and PORT MAP(
         x => entrada_0,
         y => entrada_1,
-        maior_out => maior_operac_0
+        and_out => and_operac_0
     );
 
     menor1 : menor PORT MAP(
@@ -122,7 +123,7 @@ BEGIN
     );
 
     mux16bits1 : mux16bits PORT MAP(
-        entr0 => maior_operac_0,
+        entr0 => and_operac_0,
         entr1 => menor_operac_1,
         entr2 => soma_operac_2,
         entr3 => subtr_operac_3,
@@ -133,6 +134,9 @@ BEGIN
     );
 
     out_flag_carry <= '1' WHEN entrada_0 < entrada_1 ELSE
-        '0';
+    '0';
+
+    out_flag_zero <= '1' WHEN (entrada_0 - entrada_1) = "0000000000000000" ELSE
+    '0';
 
 END ARCHITECTURE;

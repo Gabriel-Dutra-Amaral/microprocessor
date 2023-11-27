@@ -5,7 +5,7 @@ all:
 	ghdl -a rom.vhd
 	ghdl -a maquina_de_estados.vhd
 	ghdl -a un_ctrl.vhd
-	ghdl -a maior.vhd
+	ghdl -a op_and.vhd
 	ghdl -a menor.vhd
 	ghdl -a soma.vhd
 	ghdl -a subtr.vhd

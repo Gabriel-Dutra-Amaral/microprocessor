@@ -15,6 +15,9 @@ ENTITY un_ctrl IS
         saida_jrult : OUT unsigned(6 DOWNTO 0); -- Cond BLT
         seletor_jrult : OUT STD_LOGIC; -- Cond BLT
 
+        saida_jreq : OUT unsigned(6 DOWNTO 0); -- Cond BEQ
+        seletor_jreq : OUT STD_LOGIC; -- Cond BEQ
+
         reg1 : OUT unsigned(2 DOWNTO 0);
         reg2 : OUT unsigned(2 DOWNTO 0);
         wr_result_en : OUT STD_LOGIC;
@@ -28,6 +31,7 @@ ENTITY un_ctrl IS
         imediato_op : OUT STD_LOGIC;
 
         flag_Carry_o : IN STD_LOGIC;
+        flag_zero : IN STD_LOGIC;
 
         saida_estado : OUT unsigned(1 DOWNTO 0)
     );
@@ -67,6 +71,7 @@ ARCHITECTURE a_un_ctrl OF un_ctrl IS
 
     SIGNAL wr_flag : STD_LOGIC := '0';
     SIGNAL flag_reg_c_s : STD_LOGIC := '0';
+    SIGNAL flag_reg_z_s : STD_LOGIC := '0';
 
     -- Banco de Registradores --
     SIGNAL registrador_src : unsigned(2 DOWNTO 0) := "000";
@@ -80,7 +85,7 @@ BEGIN
         estado => estado_maq
     );
 
-    reg1bit_flag : reg1bit PORT MAP(
+    flag_carry_reg : reg1bit PORT MAP(
         clk => clk,
         rst => rst,
         wr_en => wr_flag,
@@ -88,28 +93,36 @@ BEGIN
         data_in => flag_Carry_o
     );
 
+    flag_zero_reg : reg1bit PORT MAP(
+        clk => clk,
+        rst => rst,
+        wr_en => wr_flag,
+        data_out => flag_reg_z_s,
+        data_in => flag_zero
+    );
+
     -- FETCH --
     wr_en_pc <= '0' WHEN estado_maq = "00" ELSE
-        '0' WHEN estado_maq = "01" ELSE
-        '1' WHEN (estado_maq = "10" OR NOT opcode = "0001") ELSE
-        '0';
+    '0' WHEN estado_maq = "01" ELSE
+    '1' WHEN (estado_maq = "10" OR NOT opcode = "0001") ELSE
+    '0';
 
     -- DECODE --
     entrada_uc <= leitura_de_instrucao;
     opcode <= entrada_uc(15 DOWNTO 12);
 
     imediato_op <= '1' WHEN entrada_uc(11) = '1' ELSE
-        '1' WHEN opcode = "1000" ELSE
-        '0';
+    '1' WHEN opcode = "1000" ELSE
+    '0';
 
-    valor_soma_subt<= "00000000" & entrada_uc(10 DOWNTO 3);
+    valor_soma_subt <= "00000000" & entrada_uc(10 DOWNTO 3);
     valor_mov_cmp <= "00000000000" & entrada_uc(10 DOWNTO 6);
     valor_ram <= "000000000" & entrada_uc(9 DOWNTO 3);
 
     valor_imm_op <= valor_soma_subt WHEN (opcode = "0100" OR opcode = "0011") ELSE
-        valor_mov_cmp WHEN (opcode = "0101" OR opcode = "0110") ELSE
-        valor_ram WHEN (opcode = "1000") ELSE
-        "0000000000000000";
+    valor_mov_cmp WHEN (opcode = "0101" OR opcode = "0110") ELSE
+    valor_ram WHEN (opcode = "1000") ELSE
+    "0000000000000000";
 
     valor_imediato_op <= valor_imm_op;
 
@@ -117,7 +130,7 @@ BEGIN
     registrador_src <= entrada_uc(2 DOWNTO 0); -- MOV\LD
 
     reg1 <= registrador_dst WHEN (opcode = "0101" OR opcode = "1000") ELSE
-        "111";
+    "111";
 
     reg2 <= registrador_src;
 
@@ -125,41 +138,45 @@ BEGIN
     saida_jrult <= entrada_uc(6 DOWNTO 0);
 
     register_code <= registrador_dst WHEN (opcode = "0101" OR opcode = "1000") ELSE
-        "111";
+    "111";
 
     seletor_ula <= "010" WHEN opcode = "0011" ELSE --ADD
-        "011" WHEN opcode = "0100" ELSE --SUB
-        "100" WHEN opcode = "0101" ELSE --MOV
-        "001" WHEN opcode = "0110" ELSE --CP
-        "101" WHEN opcode = "1000" ELSE -- LOAD
-        "000";
+    "011" WHEN opcode = "0100" ELSE --SUB
+    "100" WHEN opcode = "0101" ELSE --MOV
+    "001" WHEN opcode = "0110" ELSE --CP
+    "101" WHEN opcode = "1000" ELSE -- LOAD
+    "000";
 
     -- Quando escrever na flag
-    wr_flag <= '1' WHEN (opcode = "0110" OR opcode = "0011" OR opcode = "0100") ELSE
-        '0';
+    wr_flag <= '1' WHEN (opcode = "0110" OR opcode = "0011" OR opcode = "0100" OR opcode = "1010") ELSE
+    '0';
 
     -- Escrita na RAM
     wr_en_ram <= '1' WHEN (opcode = "1000" AND estado_maq = "10" AND entrada_uc(11 DOWNTO 10) = "01") ELSE
-        '0';
+    '0';
 
     -- Leitura da RAM
     seletor_write_data <= '1' WHEN (opcode = "1000" AND estado_maq = "10" AND entrada_uc(11 DOWNTO 10) = "10") ELSE
-        '0';
+    '0';
 
     -- JUMP Incondicional
     seletor_jump <= '1' WHEN (opcode = "0010") ELSE
-        '0';
+    '0';
 
     -- JRULT
     seletor_jrult <= '1' WHEN (opcode = "0111" AND flag_reg_c_s = '1') ELSE
-        '0';
+    '0';
+
+    -- JREQ
+    seletor_jreq <= '1' WHEN (opcode = "1001" AND flag_reg_z_s = '1') ELSE
+    '0';
 
     -- EXECUTE --
     wr_result_en <= '1' WHEN estado_maq = "10" AND (opcode = "0101" OR opcode = "0011" OR opcode = "0100" OR (opcode = "1000" AND entrada_uc(11 DOWNTO 10) = "10")) ELSE
-        '0';
+    '0';
 
     seletor_jrult <= '1' WHEN opcode = "0111" ELSE
-        '0';
+    '0';
 
     saida_estado <= estado_maq;
 
