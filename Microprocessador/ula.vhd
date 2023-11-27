@@ -83,6 +83,7 @@ ARCHITECTURE a_ula OF ula IS
     SIGNAL subtr_operac_3 : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL mov_operac_4 : unsigned(15 DOWNTO 0) := "0000000000000000";
     SIGNAL load_operac_5 : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL zero : STD_LOGIC := '0';
 
 BEGIN
 
@@ -133,10 +134,13 @@ BEGIN
         saida => saida_ula
     );
 
+    zero <= entrada_0(0) AND entrada_1(0);
+
     out_flag_carry <= '1' WHEN entrada_0 < entrada_1 ELSE
     '0';
 
     out_flag_zero <= '1' WHEN (entrada_0 - entrada_1) = "0000000000000000" ELSE
+    '1' WHEN zero = '0' ELSE
     '0';
 
 END ARCHITECTURE;

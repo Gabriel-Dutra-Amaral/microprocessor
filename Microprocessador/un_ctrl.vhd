@@ -136,15 +136,17 @@ BEGIN
 
     saida_jump <= (entrada_uc(6 DOWNTO 0) - 1);
     saida_jrult <= entrada_uc(6 DOWNTO 0);
+    saida_jreq <= entrada_uc(6 DOWNTO 0);
 
     register_code <= registrador_dst WHEN (opcode = "0101" OR opcode = "1000") ELSE
     "111";
 
-    seletor_ula <= "010" WHEN opcode = "0011" ELSE --ADD
-    "011" WHEN opcode = "0100" ELSE --SUB
-    "100" WHEN opcode = "0101" ELSE --MOV
-    "001" WHEN opcode = "0110" ELSE --CP
+    seletor_ula <= "010" WHEN opcode = "0011" ELSE -- ADD
+    "011" WHEN opcode = "0100" ELSE -- SUB
+    "100" WHEN opcode = "0101" ELSE -- MOV
+    "001" WHEN opcode = "0110" ELSE -- CP
     "101" WHEN opcode = "1000" ELSE -- LOAD
+    "000" WHEN opcode = "1010" ELSE -- AND
     "000";
 
     -- Quando escrever na flag
@@ -173,9 +175,6 @@ BEGIN
 
     -- EXECUTE --
     wr_result_en <= '1' WHEN estado_maq = "10" AND (opcode = "0101" OR opcode = "0011" OR opcode = "0100" OR (opcode = "1000" AND entrada_uc(11 DOWNTO 10) = "10")) ELSE
-    '0';
-
-    seletor_jrult <= '1' WHEN opcode = "0111" ELSE
     '0';
 
     saida_estado <= estado_maq;

@@ -50,25 +50,31 @@ ARCHITECTURE a_processador OF processador IS
             rst : IN STD_LOGIC;
 
             wr_en_pc : OUT STD_LOGIC;
-            seletor_jump : OUT STD_LOGIC;
-            saida_jump : OUT unsigned(6 DOWNTO 0);
+            seletor_jump : OUT STD_LOGIC; -- Incond
+            saida_jump : OUT unsigned(6 DOWNTO 0); -- Incond
 
             saida_jrult : OUT unsigned(6 DOWNTO 0); -- Cond BLT
             seletor_jrult : OUT STD_LOGIC; -- Cond BLT
+
+            saida_jreq : OUT unsigned(6 DOWNTO 0); -- Cond BEQ
+            seletor_jreq : OUT STD_LOGIC; -- Cond BEQ
 
             reg1 : OUT unsigned(2 DOWNTO 0);
             reg2 : OUT unsigned(2 DOWNTO 0);
             wr_result_en : OUT STD_LOGIC;
             register_code : OUT unsigned(2 DOWNTO 0);
 
-            wr_en_ram : OUT STD_LOGIC; -- RAM
+            wr_en_ram : OUT STD_LOGIC; -- RAM: 0 -> Lendo & 1 -> Escrevendo
             seletor_write_data : OUT STD_LOGIC;
 
             valor_imediato_op : OUT unsigned(15 DOWNTO 0);
             seletor_ula : OUT unsigned(2 DOWNTO 0);
             imediato_op : OUT STD_LOGIC;
-            saida_estado : OUT unsigned(1 DOWNTO 0);
-            flag_Carry_o : IN STD_LOGIC
+
+            flag_Carry_o : IN STD_LOGIC;
+            flag_zero : IN STD_LOGIC;
+
+            saida_estado : OUT unsigned(1 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -188,21 +194,30 @@ BEGIN
         clk => clk,
         rst => rst,
         wr_en_pc => wr_en_pc_uc,
+        
         seletor_jump => ctrl_salto,
         saida_jump => valor_jump,
+
         saida_jrult => valor_jrult,
         seletor_jrult => ctrl_jrult,
+
+        saida_jreq => valor_jreq,
+        seletor_jreq => ctrl_jreq,
+
         reg1 => entrada_reg1,
         reg2 => entrada_reg2,
         wr_result_en => escreve_registrador,
         register_code => codigo_registrador,
+
         wr_en_ram => wr_en_ram,
         seletor_write_data => sel_banco_ram,
+
         valor_imediato_op => valor_imediato_op,
         seletor_ula => seleciona_op_ula,
         imediato_op => eh_imediato,
         saida_estado => valor_do_estado,
-        flag_Carry_o => flag_C_s
+        flag_Carry_o => flag_C_s,
+        flag_zero => flag_z_s
     );
 
     mux_ula_ram_out <= saida_ram WHEN sel_banco_ram = '1' ELSE
@@ -228,7 +243,8 @@ BEGIN
         entrada_1 => mux_reg_imm,
         seletor_op => seleciona_op_ula,
         saida_ula => saida_ula,
-        out_flag_carry => flag_C_s
+        out_flag_carry => flag_C_s,
+        out_flag_zero => flag_z_s
     );
 
     ram_0 : ram PORT MAP(
