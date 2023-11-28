@@ -13,7 +13,7 @@ END ENTITY;
 ARCHITECTURE a_rom OF rom IS
 
     TYPE mem IS ARRAY (0 TO 127) OF unsigned(15 DOWNTO 0);
-    
+
     CONSTANT conteudo_rom : mem := (
         0 => B"0001_000000000000", -- NOP 
         ------ Povoando a ram com os valores 1,2,3 ... 32.                         
@@ -32,7 +32,7 @@ ARCHITECTURE a_rom OF rom IS
         11 => B"0101_1_00001_111_000", -- MOV A,1
         12 => B"0101_0_00000_010_111", -- MOV R2,A-> R2 = 1
         13 => B"1000_01_0000_000_010", -- LDS R0, [R2]
-        
+
         -- Elimina multiplos de 2:
         14 => B"0101_1_00010_111_000", -- MOV A,2
         15 => B"0101_0_00000_001_111", -- MOV R1,A -- Contador
@@ -74,14 +74,36 @@ ARCHITECTURE a_rom OF rom IS
         49 => B"0101_0_00000_001_111", -- MOV R1,A -- Atualiza contador [6]
         50 => B"0110_0_00000_111_010", -- CP A, R2 -- Compara com limite superior
         51 => B"0111_00000_0000010", -- JRULT INST. -> 51+2 = 53
-        52 => B"0010_00_0000110111", -- JP 33
+        52 => B"0010_00_0000110111", -- JP 55
 
         53 => B"1000_01_0000_000_001", -- LDS R0, [R1]
         54 => B"0010_00000_0101111", -- JP 47
 
         55 => B"0001_000000000000", -- NOP
 
-           
+        -- Elimina multiplos de 5:
+        56 => B"0101_1_00101_111_000", -- MOV A,5
+        57 => B"0101_0_00000_001_111", -- MOV R1,A -- Contador
+        58 => B"0101_1_11111_111_000", -- MOV A,31
+        59 => B"0011_1_00000010_000", -- ADD A,2 -> 33 -> max
+        60 => B"0101_0_00000_010_111", -- MOV R2,A -- Limite superior -> 33
+        61 => B"0101_1_00001_111_000", -- MOV A,1
+        62 => B"0101_0_00000_011_111", -- MOV R3,A -- LSB 1 -> Mult. 5
+        63 => B"0101_1_00101_111_000", -- MOV A,5
+        64 => B"0101_0_00000_100_111", -- MOV R4,A -- Incremento
+
+        65 => B"0101_0_00000_111_001", -- MOV A,R1 -- Carrega contador [Inic: 5]
+        66 => B"0011_0_00000000_100", -- ADD A,R4 -- Incremento [5]
+        67 => B"0101_0_00000_001_111", -- MOV R1,A -- Atualiza contador [10]
+        68 => B"0110_0_00000_111_010", -- CP A, R2 -- Compara com limite superior
+        69 => B"0111_00000_0000010", -- JRULT INST. -> 69+2 = 71
+        70 => B"0010_00000_1001001", -- JP 73
+
+        71 => B"1000_01_0000_000_001", -- LDS R0, [R1]
+        72 => B"0010_00000_1000001", -- JP 65
+
+        73 => B"0001_000000000000", -- NOP
+
         OTHERS => (OTHERS => '0')
     );
 
