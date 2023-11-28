@@ -11,7 +11,8 @@ ENTITY processador IS
         registrador_de_instr : OUT unsigned(15 DOWNTO 0);
         saida_banco_reg1 : OUT unsigned(15 DOWNTO 0);
         saida_banco_reg2 : OUT unsigned(15 DOWNTO 0);
-        saida_da_ula : OUT unsigned(15 DOWNTO 0)
+        saida_da_ula : OUT unsigned(15 DOWNTO 0);
+        primos : OUT unsigned(15 DOWNTO 0)
 
     );
 END ENTITY;
@@ -261,5 +262,6 @@ BEGIN
     saida_banco_reg1 <= saida_reg1;
     saida_banco_reg2 <= saida_reg2;
     saida_da_ula <= saida_ula;
+    primos <= saida_ram;
 
 END ARCHITECTURE a_processador;

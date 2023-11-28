@@ -1,14 +1,14 @@
 [*]
-[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Tue Nov 28 14:58:48 2023
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Tue Nov 28 21:15:12 2023
 [*]
-[dumpfile] "/home/gabriel/Documents/2023.2/AOC/microprocessor/Microprocessador/processador_tb.ghw"
-[dumpfile_mtime] "Tue Nov 28 13:02:38 2023"
-[dumpfile_size] 315588
-[savefile] "/home/gabriel/Documents/2023.2/AOC/microprocessor/Microprocessador/processador.gtkw"
-[timestart] 216668000000
-[size] 1308 689
-[pos] -51 -51
+[dumpfile] "/home/eduardo/Documentos/Arquitetura de Computadores/microprocessor/Microprocessador/processador_tb.ghw"
+[dumpfile_mtime] "Tue Nov 28 21:10:05 2023"
+[dumpfile_size] 316271
+[savefile] "/home/eduardo/Documentos/Arquitetura de Computadores/microprocessor/Microprocessador/processador.gtkw"
+[timestart] 223890000000
+[size] 1296 704
+[pos] -101 -101
 *-29.219761 217815000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.processador_tb.
@@ -16,7 +16,7 @@
 [treeopen] top.processador_tb.utt.banco_0.reg_5.
 [treeopen] top.processador_tb.utt.uc_0.
 [sst_width] 278
-[signals_width] 254
+[signals_width] 315
 [sst_expanded] 1
 [sst_vpaned_height] 391
 @28
@@ -38,6 +38,9 @@ top.processador_tb.clk
 #{top.processador_tb.utt.banco_0.seleciona_registrador_2[2:0]} top.processador_tb.utt.banco_0.seleciona_registrador_2[2] top.processador_tb.utt.banco_0.seleciona_registrador_2[1] top.processador_tb.utt.banco_0.seleciona_registrador_2[0]
 top.processador_tb.utt.uc_0.flag_zero
 top.processador_tb.utt.uc_0.flag_carry_o
+@23
+[color] 3
+#{top.processador_tb.utt.primos[15:0]} top.processador_tb.utt.primos[15] top.processador_tb.utt.primos[14] top.processador_tb.utt.primos[13] top.processador_tb.utt.primos[12] top.processador_tb.utt.primos[11] top.processador_tb.utt.primos[10] top.processador_tb.utt.primos[9] top.processador_tb.utt.primos[8] top.processador_tb.utt.primos[7] top.processador_tb.utt.primos[6] top.processador_tb.utt.primos[5] top.processador_tb.utt.primos[4] top.processador_tb.utt.primos[3] top.processador_tb.utt.primos[2] top.processador_tb.utt.primos[1] top.processador_tb.utt.primos[0]
 @22
 #{top.processador_tb.utt.banco_0.data_out_7[15:0]} top.processador_tb.utt.banco_0.data_out_7[15] top.processador_tb.utt.banco_0.data_out_7[14] top.processador_tb.utt.banco_0.data_out_7[13] top.processador_tb.utt.banco_0.data_out_7[12] top.processador_tb.utt.banco_0.data_out_7[11] top.processador_tb.utt.banco_0.data_out_7[10] top.processador_tb.utt.banco_0.data_out_7[9] top.processador_tb.utt.banco_0.data_out_7[8] top.processador_tb.utt.banco_0.data_out_7[7] top.processador_tb.utt.banco_0.data_out_7[6] top.processador_tb.utt.banco_0.data_out_7[5] top.processador_tb.utt.banco_0.data_out_7[4] top.processador_tb.utt.banco_0.data_out_7[3] top.processador_tb.utt.banco_0.data_out_7[2] top.processador_tb.utt.banco_0.data_out_7[1] top.processador_tb.utt.banco_0.data_out_7[0]
 #{top.processador_tb.utt.banco_0.data_out_6[15:0]} top.processador_tb.utt.banco_0.data_out_6[15] top.processador_tb.utt.banco_0.data_out_6[14] top.processador_tb.utt.banco_0.data_out_6[13] top.processador_tb.utt.banco_0.data_out_6[12] top.processador_tb.utt.banco_0.data_out_6[11] top.processador_tb.utt.banco_0.data_out_6[10] top.processador_tb.utt.banco_0.data_out_6[9] top.processador_tb.utt.banco_0.data_out_6[8] top.processador_tb.utt.banco_0.data_out_6[7] top.processador_tb.utt.banco_0.data_out_6[6] top.processador_tb.utt.banco_0.data_out_6[5] top.processador_tb.utt.banco_0.data_out_6[4] top.processador_tb.utt.banco_0.data_out_6[3] top.processador_tb.utt.banco_0.data_out_6[2] top.processador_tb.utt.banco_0.data_out_6[1] top.processador_tb.utt.banco_0.data_out_6[0]
@@ -59,9 +62,7 @@ top.processador_tb.utt.uc_0.flag_carry_o
 #{top.processador_tb.utt.ram_0.conteudo_ram[10][15:0]} top.processador_tb.utt.ram_0.conteudo_ram[10][15] top.processador_tb.utt.ram_0.conteudo_ram[10][14] top.processador_tb.utt.ram_0.conteudo_ram[10][13] top.processador_tb.utt.ram_0.conteudo_ram[10][12] top.processador_tb.utt.ram_0.conteudo_ram[10][11] top.processador_tb.utt.ram_0.conteudo_ram[10][10] top.processador_tb.utt.ram_0.conteudo_ram[10][9] top.processador_tb.utt.ram_0.conteudo_ram[10][8] top.processador_tb.utt.ram_0.conteudo_ram[10][7] top.processador_tb.utt.ram_0.conteudo_ram[10][6] top.processador_tb.utt.ram_0.conteudo_ram[10][5] top.processador_tb.utt.ram_0.conteudo_ram[10][4] top.processador_tb.utt.ram_0.conteudo_ram[10][3] top.processador_tb.utt.ram_0.conteudo_ram[10][2] top.processador_tb.utt.ram_0.conteudo_ram[10][1] top.processador_tb.utt.ram_0.conteudo_ram[10][0]
 #{top.processador_tb.utt.ram_0.conteudo_ram[11][15:0]} top.processador_tb.utt.ram_0.conteudo_ram[11][15] top.processador_tb.utt.ram_0.conteudo_ram[11][14] top.processador_tb.utt.ram_0.conteudo_ram[11][13] top.processador_tb.utt.ram_0.conteudo_ram[11][12] top.processador_tb.utt.ram_0.conteudo_ram[11][11] top.processador_tb.utt.ram_0.conteudo_ram[11][10] top.processador_tb.utt.ram_0.conteudo_ram[11][9] top.processador_tb.utt.ram_0.conteudo_ram[11][8] top.processador_tb.utt.ram_0.conteudo_ram[11][7] top.processador_tb.utt.ram_0.conteudo_ram[11][6] top.processador_tb.utt.ram_0.conteudo_ram[11][5] top.processador_tb.utt.ram_0.conteudo_ram[11][4] top.processador_tb.utt.ram_0.conteudo_ram[11][3] top.processador_tb.utt.ram_0.conteudo_ram[11][2] top.processador_tb.utt.ram_0.conteudo_ram[11][1] top.processador_tb.utt.ram_0.conteudo_ram[11][0]
 #{top.processador_tb.utt.ram_0.conteudo_ram[12][15:0]} top.processador_tb.utt.ram_0.conteudo_ram[12][15] top.processador_tb.utt.ram_0.conteudo_ram[12][14] top.processador_tb.utt.ram_0.conteudo_ram[12][13] top.processador_tb.utt.ram_0.conteudo_ram[12][12] top.processador_tb.utt.ram_0.conteudo_ram[12][11] top.processador_tb.utt.ram_0.conteudo_ram[12][10] top.processador_tb.utt.ram_0.conteudo_ram[12][9] top.processador_tb.utt.ram_0.conteudo_ram[12][8] top.processador_tb.utt.ram_0.conteudo_ram[12][7] top.processador_tb.utt.ram_0.conteudo_ram[12][6] top.processador_tb.utt.ram_0.conteudo_ram[12][5] top.processador_tb.utt.ram_0.conteudo_ram[12][4] top.processador_tb.utt.ram_0.conteudo_ram[12][3] top.processador_tb.utt.ram_0.conteudo_ram[12][2] top.processador_tb.utt.ram_0.conteudo_ram[12][1] top.processador_tb.utt.ram_0.conteudo_ram[12][0]
-@23
 #{top.processador_tb.utt.ram_0.conteudo_ram[13][15:0]} top.processador_tb.utt.ram_0.conteudo_ram[13][15] top.processador_tb.utt.ram_0.conteudo_ram[13][14] top.processador_tb.utt.ram_0.conteudo_ram[13][13] top.processador_tb.utt.ram_0.conteudo_ram[13][12] top.processador_tb.utt.ram_0.conteudo_ram[13][11] top.processador_tb.utt.ram_0.conteudo_ram[13][10] top.processador_tb.utt.ram_0.conteudo_ram[13][9] top.processador_tb.utt.ram_0.conteudo_ram[13][8] top.processador_tb.utt.ram_0.conteudo_ram[13][7] top.processador_tb.utt.ram_0.conteudo_ram[13][6] top.processador_tb.utt.ram_0.conteudo_ram[13][5] top.processador_tb.utt.ram_0.conteudo_ram[13][4] top.processador_tb.utt.ram_0.conteudo_ram[13][3] top.processador_tb.utt.ram_0.conteudo_ram[13][2] top.processador_tb.utt.ram_0.conteudo_ram[13][1] top.processador_tb.utt.ram_0.conteudo_ram[13][0]
-@22
 #{top.processador_tb.utt.ram_0.conteudo_ram[14][15:0]} top.processador_tb.utt.ram_0.conteudo_ram[14][15] top.processador_tb.utt.ram_0.conteudo_ram[14][14] top.processador_tb.utt.ram_0.conteudo_ram[14][13] top.processador_tb.utt.ram_0.conteudo_ram[14][12] top.processador_tb.utt.ram_0.conteudo_ram[14][11] top.processador_tb.utt.ram_0.conteudo_ram[14][10] top.processador_tb.utt.ram_0.conteudo_ram[14][9] top.processador_tb.utt.ram_0.conteudo_ram[14][8] top.processador_tb.utt.ram_0.conteudo_ram[14][7] top.processador_tb.utt.ram_0.conteudo_ram[14][6] top.processador_tb.utt.ram_0.conteudo_ram[14][5] top.processador_tb.utt.ram_0.conteudo_ram[14][4] top.processador_tb.utt.ram_0.conteudo_ram[14][3] top.processador_tb.utt.ram_0.conteudo_ram[14][2] top.processador_tb.utt.ram_0.conteudo_ram[14][1] top.processador_tb.utt.ram_0.conteudo_ram[14][0]
 #{top.processador_tb.utt.ram_0.conteudo_ram[15][15:0]} top.processador_tb.utt.ram_0.conteudo_ram[15][15] top.processador_tb.utt.ram_0.conteudo_ram[15][14] top.processador_tb.utt.ram_0.conteudo_ram[15][13] top.processador_tb.utt.ram_0.conteudo_ram[15][12] top.processador_tb.utt.ram_0.conteudo_ram[15][11] top.processador_tb.utt.ram_0.conteudo_ram[15][10] top.processador_tb.utt.ram_0.conteudo_ram[15][9] top.processador_tb.utt.ram_0.conteudo_ram[15][8] top.processador_tb.utt.ram_0.conteudo_ram[15][7] top.processador_tb.utt.ram_0.conteudo_ram[15][6] top.processador_tb.utt.ram_0.conteudo_ram[15][5] top.processador_tb.utt.ram_0.conteudo_ram[15][4] top.processador_tb.utt.ram_0.conteudo_ram[15][3] top.processador_tb.utt.ram_0.conteudo_ram[15][2] top.processador_tb.utt.ram_0.conteudo_ram[15][1] top.processador_tb.utt.ram_0.conteudo_ram[15][0]
 #{top.processador_tb.utt.ram_0.conteudo_ram[16][15:0]} top.processador_tb.utt.ram_0.conteudo_ram[16][15] top.processador_tb.utt.ram_0.conteudo_ram[16][14] top.processador_tb.utt.ram_0.conteudo_ram[16][13] top.processador_tb.utt.ram_0.conteudo_ram[16][12] top.processador_tb.utt.ram_0.conteudo_ram[16][11] top.processador_tb.utt.ram_0.conteudo_ram[16][10] top.processador_tb.utt.ram_0.conteudo_ram[16][9] top.processador_tb.utt.ram_0.conteudo_ram[16][8] top.processador_tb.utt.ram_0.conteudo_ram[16][7] top.processador_tb.utt.ram_0.conteudo_ram[16][6] top.processador_tb.utt.ram_0.conteudo_ram[16][5] top.processador_tb.utt.ram_0.conteudo_ram[16][4] top.processador_tb.utt.ram_0.conteudo_ram[16][3] top.processador_tb.utt.ram_0.conteudo_ram[16][2] top.processador_tb.utt.ram_0.conteudo_ram[16][1] top.processador_tb.utt.ram_0.conteudo_ram[16][0]
