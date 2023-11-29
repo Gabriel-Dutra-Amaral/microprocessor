@@ -16,7 +16,8 @@ ARCHITECTURE a_processador_tb OF processador_tb IS
             registrador_de_instr : OUT unsigned(15 DOWNTO 0);
             saida_banco_reg1 : OUT unsigned(15 DOWNTO 0);
             saida_banco_reg2 : OUT unsigned(15 DOWNTO 0);
-            saida_da_ula : OUT unsigned(15 DOWNTO 0)
+            saida_da_ula : OUT unsigned(15 DOWNTO 0);
+            primos : OUT unsigned(15 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -54,7 +55,7 @@ BEGIN
 
     sim_time_proc : PROCESS
     BEGIN
-        WAIT FOR period_time * 3000;
+        WAIT FOR period_time * 2257;
         finished <= '1';
         WAIT;
     END PROCESS sim_time_proc;

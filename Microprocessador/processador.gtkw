@@ -1,24 +1,24 @@
 [*]
-[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Tue Nov 28 21:15:12 2023
+[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
+[*] Wed Nov 29 04:03:07 2023
 [*]
-[dumpfile] "/home/eduardo/Documentos/Arquitetura de Computadores/microprocessor/Microprocessador/processador_tb.ghw"
-[dumpfile_mtime] "Tue Nov 28 21:10:05 2023"
-[dumpfile_size] 316271
-[savefile] "/home/eduardo/Documentos/Arquitetura de Computadores/microprocessor/Microprocessador/processador.gtkw"
-[timestart] 223890000000
-[size] 1296 704
-[pos] -101 -101
+[dumpfile] "/home/gabriel/Documents/2023.2/AOC/microprocessor/Microprocessador/processador_tb.ghw"
+[dumpfile_mtime] "Wed Nov 29 04:02:55 2023"
+[dumpfile_size] 272879
+[savefile] "/home/gabriel/Documents/2023.2/AOC/microprocessor/Microprocessador/processador.gtkw"
+[timestart] 147933000000
+[size] 1000 600
+[pos] -1 -1
 *-29.219761 217815000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.processador_tb.
 [treeopen] top.processador_tb.utt.
 [treeopen] top.processador_tb.utt.banco_0.reg_5.
-[treeopen] top.processador_tb.utt.uc_0.
+[treeopen] top.processador_tb.utt.ram_0.
 [sst_width] 278
 [signals_width] 315
 [sst_expanded] 1
-[sst_vpaned_height] 391
+[sst_vpaned_height] 342
 @28
 top.processador_tb.rst
 top.processador_tb.clk
@@ -38,7 +38,7 @@ top.processador_tb.clk
 #{top.processador_tb.utt.banco_0.seleciona_registrador_2[2:0]} top.processador_tb.utt.banco_0.seleciona_registrador_2[2] top.processador_tb.utt.banco_0.seleciona_registrador_2[1] top.processador_tb.utt.banco_0.seleciona_registrador_2[0]
 top.processador_tb.utt.uc_0.flag_zero
 top.processador_tb.utt.uc_0.flag_carry_o
-@23
+@25
 [color] 3
 #{top.processador_tb.utt.primos[15:0]} top.processador_tb.utt.primos[15] top.processador_tb.utt.primos[14] top.processador_tb.utt.primos[13] top.processador_tb.utt.primos[12] top.processador_tb.utt.primos[11] top.processador_tb.utt.primos[10] top.processador_tb.utt.primos[9] top.processador_tb.utt.primos[8] top.processador_tb.utt.primos[7] top.processador_tb.utt.primos[6] top.processador_tb.utt.primos[5] top.processador_tb.utt.primos[4] top.processador_tb.utt.primos[3] top.processador_tb.utt.primos[2] top.processador_tb.utt.primos[1] top.processador_tb.utt.primos[0]
 @22

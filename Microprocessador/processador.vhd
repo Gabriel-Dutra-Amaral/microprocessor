@@ -13,7 +13,6 @@ ENTITY processador IS
         saida_banco_reg2 : OUT unsigned(15 DOWNTO 0);
         saida_da_ula : OUT unsigned(15 DOWNTO 0);
         primos : OUT unsigned(15 DOWNTO 0)
-
     );
 END ENTITY;
 
@@ -114,6 +113,16 @@ ARCHITECTURE a_processador OF processador IS
         );
     END COMPONENT;
 
+    COMPONENT reg16bits IS
+        PORT (
+            clk : IN STD_LOGIC;
+            rst : IN STD_LOGIC;
+            wr_en : IN STD_LOGIC;
+            data_in : IN unsigned(15 DOWNTO 0);
+            data_out : OUT unsigned(15 DOWNTO 0)
+        );
+    END COMPONENT;
+
     -- Salto incondicional --
     SIGNAL wr_en_pc_uc : STD_LOGIC := '0';
     SIGNAL saida_rom : unsigned(15 DOWNTO 0) := "0000000000000000";
@@ -164,12 +173,16 @@ ARCHITECTURE a_processador OF processador IS
     SIGNAL sel_banco_ram : STD_LOGIC := '0';
     SIGNAL mux_ula_ram_out : unsigned(15 DOWNTO 0) := "0000000000000000";
 
+    -- Primos --
+    SIGNAL saida_primos : unsigned(15 DOWNTO 0) := "0000000000000000";
+    SIGNAL wr_en_primos : STD_LOGIC := '0';
+
 BEGIN
 
     mux_3x3x1_entrada_pc <= (valor_jump) WHEN (ctrl_salto = '1' AND ctrl_jrult = '0' AND ctrl_jreq = '0') ELSE
-    (saida_endereco_pc + valor_jrult) WHEN (ctrl_salto = '0' AND ctrl_jrult = '1' AND ctrl_jreq = '0') ELSE
-    (saida_endereco_pc + valor_jrult) WHEN (ctrl_salto = '0' AND ctrl_jrult = '0' AND ctrl_jreq = '1') ELSE
-    saida_somador;
+        (saida_endereco_pc + valor_jrult) WHEN (ctrl_salto = '0' AND ctrl_jrult = '1' AND ctrl_jreq = '0') ELSE
+        (saida_endereco_pc + valor_jrult) WHEN (ctrl_salto = '0' AND ctrl_jrult = '0' AND ctrl_jreq = '1') ELSE
+        saida_somador;
 
     pc_0 : pc PORT MAP(
         clk => clk,
@@ -195,7 +208,7 @@ BEGIN
         clk => clk,
         rst => rst,
         wr_en_pc => wr_en_pc_uc,
-        
+
         seletor_jump => ctrl_salto,
         saida_jump => valor_jump,
 
@@ -222,7 +235,7 @@ BEGIN
     );
 
     mux_ula_ram_out <= saida_ram WHEN sel_banco_ram = '1' ELSE
-    saida_ula;
+        saida_ula;
 
     banco_0 : banco_de_registradores PORT MAP(
         seleciona_registrador_1 => entrada_reg1,
@@ -237,7 +250,7 @@ BEGIN
     );
 
     mux_reg_imm <= saida_reg2 WHEN eh_imediato = '0' ELSE
-    valor_imediato_op;
+        valor_imediato_op;
 
     ula_0 : ula PORT MAP(
         entrada_0 => saida_reg1,
@@ -256,12 +269,23 @@ BEGIN
         dado_out => saida_ram
     );
 
+    reg_primos_0 : reg16bits PORT MAP(
+        clk => clk,
+        rst => rst,
+        wr_en => wr_en_primos,
+        data_in => saida_ram,
+        data_out => saida_primos
+    );
+
+    wr_en_primos <= '1' WHEN (saida_somador >= "0001011110") AND (saida_ram /= "0000000000000000") ELSE
+        '0';
+
     estado <= valor_do_estado;
     pc_saida <= saida_somador;
     registrador_de_instr <= saida_rom;
     saida_banco_reg1 <= saida_reg1;
     saida_banco_reg2 <= saida_reg2;
     saida_da_ula <= saida_ula;
-    primos <= saida_ram;
+    primos <= saida_primos;
 
 END ARCHITECTURE a_processador;
